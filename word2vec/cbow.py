@@ -1,6 +1,6 @@
 import sys
 sys.path.append('..')
-import numpy as np
+from common.np import np
 from common.layers import Embedding
 from word2vec.negative_sampling_layer import NegativeSamplingLoss
 
@@ -14,10 +14,6 @@ class CBOW:
         W_out = 0.01 * np.random.randn(V, H).astype('f')
 
         # レイヤ生成
-        # self.in_layers = []
-        # for _ in range(2 * window_size):
-        #     layer = Embedding(W_in)
-        #     self.in_layers.append(layer)
         self.in_layers = [Embedding(W_in) for _ in range(2 * window_size)]
         self.ns_loss = NegativeSamplingLoss(W_out, corpus, power=0.75, sample_size=5)
 
@@ -27,7 +23,7 @@ class CBOW:
         for layer in layers:
             self.params += layer.params
             self.grads += layer.grads
-        
+
         # メンバ変数に単語の分散表現を設定
         self.word_vecs = W_in
 

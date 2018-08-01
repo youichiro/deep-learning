@@ -9,14 +9,26 @@ from cbow import CBOW
 from common.utils import create_contexts_target, get_vocab, to_cpu, to_gpu
 
 
-window_size = 2
-hidden_size = 100
-batch_size = 30
+window_size = 5
+hidden_size = 500
+batch_size = 300
 max_epoch = 20
-eval_interval = 5
+eval_interval = 100
+corpus_file = '/lab/ogawa/corpora/nikkei/nikkei_all.wakati_unidic.txt'
 
-corpus, word_to_id, id_to_word = get_vocab('../datasets/testdata.txt')
+print('[ Hyper parameters ]')
+print('- window_size:', window_size)
+print('- hidden_size:', hidden_size)
+print('- batch_size:', batch_size)
+print('- corpus:', corpus_file)
+print()
+
+corpus, word_to_id, id_to_word = get_vocab(corpus_file)
 vocab_size = len(word_to_id)
+print('\n[ statics ]')
+print('- corpus_size:', len(corpus))
+print('- vocab_size:', vocab_size)
+print()
 
 contexts, target = create_contexts_target(corpus, window_size)
 if GPU:
@@ -26,8 +38,9 @@ model = CBOW(vocab_size, hidden_size, window_size, corpus)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
+print('[ progress ]')
 trainer.fit(contexts, target, max_epoch, batch_size, eval_interval=eval_interval)
-trainer.plot()
+# trainer.plot()
 
 word_vecs = model.word_vecs
 if GPU:
@@ -40,3 +53,4 @@ params['id_to_word'] = id_to_word
 pkl_file = 'cbow_params.pkl'
 with open(pkl_file, 'wb') as f:
     pickle.dump(params, f, -1)
+

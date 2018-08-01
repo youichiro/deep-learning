@@ -12,7 +12,7 @@ with open(pkl_file, 'rb') as f:
     word_to_id = params['word_to_id']
     id_to_word = params['id_to_word']
 
-queries = ['i', 'like', 'soccor']
-for query in queries:
+while True:
+    query = input('\nquery -> ')
+    if query == 'end': break
     most_similar(query, word_to_id, id_to_word, word_vecs)
-

@@ -26,7 +26,7 @@ class TwoLayerNet:
         for layer in self.layers:
             self.params += layer.params
             self.grads += layer.grads
-    
+
     def predict(self, x):
         for layer in self.layers:
             x = layer.forward(x)
@@ -42,4 +42,4 @@ class TwoLayerNet:
         for layer in reversed(self.layers):
             dout = layer.backward(dout)
         return dout
-    
+

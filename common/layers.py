@@ -1,4 +1,4 @@
-import numpy as np
+from common.np import np
 from common.functions import softmax, cross_entropy_error
 
 
@@ -7,13 +7,13 @@ class MatMul:
         self.params = [W]
         self.grads = [np.zeros_like(W)]
         self.x = None
-    
+
     def forward(self, x):
         W, = self.params
         out = np.dot(x, W)
         self.x = x
         return out
-    
+
     def backward(self, dout):
         W, = self.params
         dx = np.dot(dout, W.T)
@@ -26,7 +26,7 @@ class Sigmoid:
     def __init__(self):
         self.params, self.grads = [], []
         self.out = None
-    
+
     def forward(self, x):
         out = 1 / (1 + np.exp(-x))
         self.out = out

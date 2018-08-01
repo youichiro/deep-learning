@@ -39,7 +39,7 @@ class UnigramSampler:
         counts = Counter()
         for word_id in corpus:
             counts[word_id] += 1
-        
+
         vocab_size = len(counts)
         self.vocab_size = vocab_size
 
@@ -61,8 +61,8 @@ class UnigramSampler:
                 p[target_idx] = 0
                 p /= p.sum()
                 negative_sample[i,:] = np.random.choice(self.vocab_size, size=self.sample_size, replace=False, p=p)
-            else:
-                negative_sample = np.random.choice(self.vocab_size, size=(batch_size, self.sample_size), replace=True, p=self.word_p)
+        else:
+            negative_sample = np.random.choice(self.vocab_size, size=(batch_size, self.sample_size), replace=True, p=self.word_p)
         return negative_sample
 
 
@@ -93,7 +93,7 @@ class NegativeSamplingLoss:
             negative_target = negative_sample[:, i]
             score = self.embed_dot_layers[1 + i].forward(h, negative_target)
             loss += self.loss_layers[1 + i].forward(score, negative_label)
-        
+
         return loss
 
     def backward(self, dout=1):
