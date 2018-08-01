@@ -1,0 +1,15 @@
+I want to go to Japan.
+You say goodbye and I say hello.
+We call it onigiri.
+What's the plural of corpus?
+In what social situations is wicked a term of approval? 
+Why does it "sound wrong" to say The good weather set in on Thursday although The bad weather set in on Thursday is perfectly acceptable? 
+If I can say I live a stone's throw away from here , can I also say I'm going a stone's throw away from here?
+Large language corpora can help provide answers for these kinds of questions -- if only because they encourage linguists, lexicographers, and all who work with language to ask them. 
+The purpose of a language corpus is to provide language workers with evidence of how language is really used, evidence that can then be used to inform and substantiate individual theories about what words might or should mean. 
+Traditional grammars and dictionaries tell us what a word ought to mean, but only experience can tell us what a word is used to mean. 
+This is why dictionary publishers, grammar writers, language teachers, and developers of natural language processing software alike have been turning to corpus evidence as a means of extending and organizing that experience.
+With the development of computing technology able to store and handle massive amounts of linguistic evidence, it has become possible to base linguistic judgment on something far greater and far more varied than any one individual's personal experience or intuitions. 
+The British National Corpus (BNC) was created in order to offer that possibility to the widest variety of researchers, scholars, teachers, and language enthusiasts
+Ultimately, its use is limited only by our imagination; if you have any need for up to 100 million words of modern British English, you can make use of the British National Corpus.
+The main uses of the corpus, are as follows:
