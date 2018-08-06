@@ -48,16 +48,3 @@ class WindowIterator:
             self.current_position = i_end
         
         return contexts, target
-
-
-if __name__ == '__main__':
-    dataset = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-    window_size = 2
-    batch_size = 3
-    max_epoch = 2
-    train_iter = WindowIterator(dataset, window_size, batch_size, max_epoch)
-
-    for contexts, target in train_iter:
-        print(train_iter.epoch)
-        print(contexts)
-        print(target)

@@ -1,6 +1,6 @@
 import re
 import mojimoji
-from collections import defaultdict
+from collections import defaultdict, Counter
 import numpy
 from common.np import np
 from tqdm import tqdm
@@ -28,22 +28,34 @@ def load_corpus(file_path):
         for line in f:
             text = clean_ja_text(line)
             words = text.split(' ')
-            words.append('<eos>')
+            words.append('EOS')
             yield words
 
-def get_vocab(file_path):
-    word_to_id = defaultdict(lambda: len(word_to_id))
-    corpus = []
+def get_vocab(file_path, max_vocab_size, min_word_freq):
+    counter = Counter()
     corpus_size = sum(1 for line in open(file_path))
-    print('loading corpus')
+    print('Counting vocabulary.')
     with tqdm(total=corpus_size) as pbar:
         for words in load_corpus(file_path):
-            [word_to_id[word] for word in words]
-            corpus += [word_to_id[word] for word in words]
+            for w in words:
+                counter[w] += 1
+            pbar.update(1)
+    vocab = [w for w, f in counter.most_common(max_vocab_size) if f >= min_word_freq]
+    word_to_id = {w: i for i, w in enumerate(vocab)}
+    corpus = []
+    print('Converting word to ID.')
+    with tqdm(total=corpus_size) as pbar:
+        for words in load_corpus(file_path):
+            for w in words:
+                if w not in word_to_id.keys():
+                    word_to_id['UNK'] = len(word_to_id) - 1
+                    corpus.append(word_to_id['UNK'])
+                else:
+                    corpus.append(word_to_id[w])
             pbar.update(1)
     id_to_word = {v: k for k, v in word_to_id.items()}
-    word_to_id = dict(word_to_id)
     return corpus, word_to_id, id_to_word
+
 
 def create_contexts_target(corpus, window_size=5):
     target = corpus[window_size: - window_size]

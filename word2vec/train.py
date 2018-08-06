@@ -12,9 +12,12 @@ from word2vec.iterator import WindowIterator
 
 window_size = 2
 hidden_size = 100
-batch_size = 30
+batch_size = 10
 max_epoch = 30
+max_vocab_size = 190
+min_word_freq = 1
 eval_interval = 1
+
 corpus_file = '../datasets/testdata.txt'
 
 print('[ Hyper parameters ]')
@@ -24,8 +27,9 @@ print('- batch_size:', batch_size)
 print('- corpus:', corpus_file)
 print()
 
-train, word_to_id, id_to_word = get_vocab(corpus_file)
+train, word_to_id, id_to_word = get_vocab(corpus_file, max_vocab_size, min_word_freq)
 vocab_size = len(word_to_id)
+
 print('\n[ statics ]')
 print('- token_size:', len(train))
 print('- vocab_size:', vocab_size)
@@ -50,4 +54,3 @@ params['id_to_word'] = id_to_word
 pkl_file = 'cbow_params.pkl'
 with open(pkl_file, 'wb') as f:
     pickle.dump(params, f, -1)
-

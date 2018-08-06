@@ -31,7 +31,7 @@ class Trainer:
                 avg_loss = total_loss / loss_count
                 elapsed_time = time.time() - start_time
                 print('| epoch %d \t| iter %d / %d \t| time %d[s] \t| loss %.2f \t|'
-                            % (iterator.epoch + 1, iterator.iteration, iterator.max_iters, elapsed_time, avg_loss))
+                            % (iterator.epoch + 1, iterator.iteration + 1, iterator.max_iters, elapsed_time, avg_loss))
                 self.loss_list.append(float(avg_loss))
                 total_loss, loss_count = 0, 0
 
