@@ -7,14 +7,15 @@ from common.trainer import Trainer
 from common.optimizer import Adam
 from cbow import CBOW
 from common.utils import create_contexts_target, get_vocab, to_cpu, to_gpu
+from word2vec.iterator import WindowIterator
 
 
-window_size = 5
-hidden_size = 500
-batch_size = 300
-max_epoch = 20
-eval_interval = 100
-corpus_file = '/lab/ogawa/corpora/nikkei/nikkei_all.wakati_unidic.txt'
+window_size = 2
+hidden_size = 100
+batch_size = 30
+max_epoch = 30
+eval_interval = 1
+corpus_file = '../datasets/testdata.txt'
 
 print('[ Hyper parameters ]')
 print('- window_size:', window_size)
@@ -23,23 +24,26 @@ print('- batch_size:', batch_size)
 print('- corpus:', corpus_file)
 print()
 
-corpus, word_to_id, id_to_word = get_vocab(corpus_file)
+train, word_to_id, id_to_word = get_vocab(corpus_file)
 vocab_size = len(word_to_id)
 print('\n[ statics ]')
-print('- corpus_size:', len(corpus))
+print('- token_size:', len(train))
 print('- vocab_size:', vocab_size)
 print()
 
-contexts, target = create_contexts_target(corpus, window_size)
-if GPU:
-    contexts, target = to_gpu(contexts), to_gpu(target)
+train_iter = WindowIterator(train, window_size, batch_size, max_epoch)
 
-model = CBOW(vocab_size, hidden_size, window_size, corpus)
+# contexts, target = create_contexts_target(train, window_size)
+# if GPU:
+#     contexts, target = to_gpu(contexts), to_gpu(target)
+
+model = CBOW(vocab_size, hidden_size, window_size, train)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
 print('[ progress ]')
-trainer.fit(contexts, target, max_epoch, batch_size, eval_interval=eval_interval)
+trainer.fit(train_iter, eval_interval=eval_interval)
+# trainer.fit(contexts, target, max_epoch, batch_size, eval_interval=eval_interval)
 # trainer.plot()
 
 word_vecs = model.word_vecs
