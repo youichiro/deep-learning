@@ -4,6 +4,7 @@ from collections import defaultdict
 import numpy
 from common.np import np
 from tqdm import tqdm
+from chainer.dataset.convert import to_device
 
 digit_pattern = re.compile(r'(\d( \d)*)+')
 

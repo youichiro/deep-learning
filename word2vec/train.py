@@ -6,7 +6,7 @@ import pickle
 from common.trainer import Trainer
 from common.optimizer import Adam
 from cbow import CBOW
-from common.utils import create_contexts_target, get_vocab, to_cpu, to_gpu
+from common.utils import create_contexts_target, get_vocab, to_device
 from word2vec.iterator import WindowIterator
 
 
@@ -32,23 +32,16 @@ print('- vocab_size:', vocab_size)
 print()
 
 train_iter = WindowIterator(train, window_size, batch_size, max_epoch)
-
-# contexts, target = create_contexts_target(train, window_size)
-# if GPU:
-#     contexts, target = to_gpu(contexts), to_gpu(target)
-
 model = CBOW(vocab_size, hidden_size, window_size, train)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
 print('[ progress ]')
 trainer.fit(train_iter, eval_interval=eval_interval)
-# trainer.fit(contexts, target, max_epoch, batch_size, eval_interval=eval_interval)
-# trainer.plot()
 
 word_vecs = model.word_vecs
 if GPU:
-    word_vecs = to_cpu(word_vecs)
+    word_vecs = to_device(device=-1, x=word_vecs)
 
 params = {}
 params['word_vecs'] = word_vecs.astype(np.float16)
