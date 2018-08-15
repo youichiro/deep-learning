@@ -3,7 +3,7 @@ sys.path.append('..')
 import numpy as np
 from common.config import GPU
 import pickle
-from common.trainer import Trainer
+from common.trainer import Word2vecTrainer
 from common.optimizer import Adam
 from cbow import CBOW
 from common.utils import create_contexts_target, get_vocab, to_device
@@ -43,7 +43,7 @@ print('- unk_rate: {:.2f}%'.format(unk_rate))
 train_iter = WindowIterator(train, window_size, batch_size, max_epoch)
 model = CBOW(vocab_size, hidden_size, window_size, train)
 optimizer = Adam()
-trainer = Trainer(model, optimizer)
+trainer = Word2vecTrainer(model, optimizer)
 
 print('\n\033[92m[ progress ]\033[0m')
 trainer.fit(train_iter, eval_interval=eval_interval)

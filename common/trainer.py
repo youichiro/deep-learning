@@ -3,9 +3,56 @@ sys.path.append('..')
 import time
 import numpy
 from common.np import np
+from common.utils import clip_grads
 
 
 class Trainer:
+    def __init__(self, model, optimizer):
+        self.model = model
+        self.optimizer = optimizer
+        self.loss_list = []
+        self.eval_interval = None
+        self.current_epoch = 0
+
+    def fit(self, x, t, max_epoch=10, batch_size=32, max_grad=None, eval_interval=20):
+        data_size = len(x)
+        max_iters = data_size // batch_size
+        self.eval_interval = eval_interval
+        model, optimizer = self.model, self.optimizer
+        total_loss = 0
+        loss_count = 0
+
+        start_tile = time.time()
+        for epoch in range(max_epoch):
+            idx = numpy.random.permutation(numpy.arange(data_size))
+            x = x[idx]
+            t = t[idx]
+
+            for iters in range(max_iters):
+                batch_x = x[iters*batch_size:(iter+1)*batch_size]
+                batch_t = t[iters*batch_size:(iter+1)*batch_size]
+
+                loss = model.forward(batch_x, batch_t)
+                model.backward()
+                params, grads = remove_duplicate(model.params, model.grads)
+                if max_grad is not None:
+                    clip_grads(grads, max_grad)
+                optimizer.update(params, grads)
+                total_loss += loss
+                loss_count += 1
+                
+                if (eval_interval is not None) and (iters % eval_interval) == 0:
+                    avg_loss = total_loss / loss_count
+                    elapsed_time = time.time() - start_tile
+                    print('| epoch %d \t| iter %d / %d \t| time %d[s] \t| loss %.2f'
+                          % (self.current_epoch + 1, iter + 1, max_iters, elapsed_time, avg_loss))
+                    self.loss_list.append(float(avg_loss))
+                    total_loss, loss_count = 0, 0
+            
+            self.current_epoch += 1
+
+
+class Word2vecTrainer:
     def __init__(self, model, optimizer):
         self.model = model
         self.optimizer = optimizer
