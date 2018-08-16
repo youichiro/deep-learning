@@ -30,7 +30,26 @@ model = AttentionSeq2Seq(vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
-trainer.fit(x_train, t_train, max_epoch=10, batch_size=batch_size, max_grad=max_grad)
+for i in range(max_epoch):
+    trainer.fit(x_train, t_train, max_epoch=1, batch_size=batch_size, max_grad=max_grad)
+
+    for i in range(len(x_test)):
+        src, tgt = x_test[i], t_test[i]
+        verbose = i < 10
+        start_id = tgt[0]
+        tgt = tgt[1:]
+        guess = model.generate(src, start_id, len(tgt))
+
+        src = ''.join([src_id2w[c] for c in src])
+        tgt = ''.join([tgt_id2w[c] for c in tgt])
+        guess = ''.join([tgt_id2w[c] for c in guess])
+
+        if verbose:
+            src = src[::-1]
+            print('src:', src)
+            print('tgt:', tgt)
+            print('out', guess)
+            print('---')
 
 # acc_list = []
 # for i in range(max_epoch):
