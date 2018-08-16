@@ -201,25 +201,14 @@ class AttentionDecoder:
             sample_id = np.argmax(score.flatten())
             sampled.append(sample_id)
 
-        # for _ in range(sample_size):
-        #     x = np.array([sample_id]).reshape((1, 1))
-
-        #     out = self.embed.forward(x)
-        #     dec_hs = self.lstm.forward(out)
-        #     c = self.attention.forward(enc_hs, dec_hs)
-        #     out = np.concatenate((c, dec_hs), axis=2)
-        #     score = self.affine.forward(out)
-        #     sample_id = np.argmax(score.flatten())
-        #     sampled.append(sample_id)
-
         return sampled
 
 
 class AttentionSeq2Seq(Seq2Seq):
-    def __init__(self, vocab_size, wordvec_size, hidden_size):
-        args = vocab_size, wordvec_size, hidden_size
-        self.encoder = AttentionEncoder(*args)
-        self.decoder = AttentionDecoder(*args)
+    def __init__(self, src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size):
+        Vs, Vt, D, H = src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size
+        self.encoder = AttentionEncoder(Vs, D, H)
+        self.decoder = AttentionDecoder(Vt, D, H)
         self.softmax = TimeSoftmaxWithLoss()
 
         self.params = self.encoder.params + self.decoder.params

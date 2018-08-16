@@ -12,25 +12,28 @@ from models import AttentionSeq2Seq
 dataset_file = 'tanaka_ja_en.train'
 max_vocab_size = 10000
 
-(x_train, t_train), (x_test, t_test), \
-(src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = dataset.load_data(dataset_file, max_vocab_size)
+(x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w) \
+                                        = dataset.load_data(dataset_file, max_vocab_size)
 
 x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
 x_train, t_train = to_gpu(x_train), to_gpu(t_train)
 x_test, t_test = to_gpu(x_test), to_gpu(t_test)
 
-print('src vocab_size:', len(src_w2id))
-print('tgt vocab_size:', len(tgt_w2id))
-print('train size:', len(x_train))
+src_vocab_size = len(src_w2id)
+tgt_vocab_size = len(tgt_w2id)
 
-vocab_size = len(src_w2id) + len(tgt_w2id)
+print('src vocab size:', src_vocab_size)
+print('tgt vocab size:', tgt_vocab_size)
+print('train size:', len(x_train))
+print('test size:', len(x_test))
+
 wordvec_size = 500
 hidden_size = 300
 batch_size = 300
 max_epoch = 30
 # max_grad = 5.0
 
-model = AttentionSeq2Seq(vocab_size, wordvec_size, hidden_size)
+model = AttentionSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
