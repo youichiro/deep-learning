@@ -116,7 +116,7 @@ class Seq2Seq(BaseModel):
         return dout
 
     def generate(self, xs, eos_id):
-        start_id = int(xs.flatten()[0])
+        start_id = xs.flatten()[0]
         h = self.encoder.forward(xs)
         sampled = self.decoder.generate(h, start_id, eos_id)
         return sampled
@@ -191,7 +191,7 @@ class AttentionDecoder:
         self.lstm.set_state(h)
 
         while sample_id != eos_id:
-            x = np.array([sample_id]).reshape((1, 1))
+            x = np.array([int(sample_id)]).reshape((1, 1))
 
             out = self.embed.forward(x)
             dec_hs = self.lstm.forward(out)
