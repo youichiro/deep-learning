@@ -59,7 +59,6 @@ class AttentionWeight:
 
         return dhs, dh
 
-    
 class Attention:
     def __init__(self):
         self.params, self.grads = [], []
@@ -97,7 +96,7 @@ class TimeAttention:
             out[:, t, :] = layer.forward(hs_enc, hs_dec[:,t,:])
             self.layers.append(layer)
             self.attention_weights.append(layer.attention_weight)
-        
+
         return out
 
     def backward(self, dout):

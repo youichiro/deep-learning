@@ -48,7 +48,7 @@ class LSTM:
 
         di *= i * (1 - i)
         df *= f * (1 - f)
-        do += o * (1 - o)
+        do *= o * (1 - o)
         dg *= (1 - g ** 2)
 
         dA = np.hstack((df, dg, di, do))
