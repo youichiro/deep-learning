@@ -109,3 +109,28 @@ def clip_grads(grads, max_norm):
     if rate < 1:
         for grad in grads:
             grad *= rate
+
+
+def eval_seq2seq(model, question, correct, id_to_char, verbos=False, is_reverse=False):
+    correct = correct.flatten()
+    start_id = correct[0]
+    correct = correct[1:]
+    guess = model.generate(question, start_id, len(correct))
+
+    question = ''.join([id_to_char[int(c)] for c in question.flatten()])
+    correct = ''.join([id_to_char[int(c)] for c in correct])
+    quess = ''.join([id_to_char[int(c)] for c in guess])
+
+    if verbos:
+        if is_reverse:
+            question = question[::-1]
+        
+        print('Q', question)
+        print('T', correct)
+        if correct == guess:
+            print('[ok]', guess)
+        else:
+            print('[ng]', guess)
+        print('---')
+    
+    return 1 if guess == correct else 0
