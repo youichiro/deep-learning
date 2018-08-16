@@ -41,7 +41,6 @@ for i in range(max_epoch):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
         start_id = tgt[0]
-        tgt = tgt[1:]
         trainslation = model.generate(src, start_id, len(tgt))
 
         src = ''.join([src_id2w[int(c)] for c in src.flatten()[::-1]])
@@ -52,7 +51,7 @@ for i in range(max_epoch):
         print('tgt:', tgt)
         print('out:', translation)
         print('---')
-    
+
     blue_score = eval_blue(model, x_test, t_test, tgt_id2w)
     print('BLEU: {:.4f}'.format(blue_score))
 

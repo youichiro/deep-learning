@@ -1,6 +1,8 @@
+import sys
+sys.path.append('..')
 import numpy
-from utils import cos_similarity
-from bleu import compute_bleu
+from common.utils import cos_similarity
+from common.bleu import compute_bleu
 
 def most_similar(query, word_to_id, id_to_word, word_matrix, top=5):
     if query not in word_to_id:

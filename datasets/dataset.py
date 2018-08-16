@@ -11,16 +11,16 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
 
     for line in open(file_path, 'r', encoding='utf8'):
         src, tgt = line.replace('\n', '').split('\t')
-        src_words = src.split() + ['<eos>']
-        tgt_words = tgt.split() + ['<eos>']
+        src_words = src.split()
+        tgt_words = ['<bos>'] + tgt.split() + ['<eos>']
 
         src_sentences.append(src_words)
         tgt_sentences.append(tgt_words)
 
-        for word in src.split():
+        for word in src_words:
             src_counter[word] += 1
 
-        for word in tgt.split():
+        for word in tgt_words:
             tgt_counter[word] += 1
 
     src_vocab = [w for w, f in src_counter.most_common(max_vocab_size) if f > min_word_freq]
