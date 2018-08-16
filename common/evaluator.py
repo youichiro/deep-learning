@@ -53,14 +53,20 @@ def eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id):
     translations = []
     bos_id = tgt_w2id['<bos>']
     eos_id = tgt_w2id['<eos>']
+    empty_id = tgt_w2id[' ']
 
     for i in range(len(x_test)):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
         trainslation = model.generate(src, eos_id)
 
-        references.append([[tgt_id2w[int(c)] for c in tgt]])
-        translations.append([tgt_id2w[int(c)] for c in trainslation])
+        r = [[tgt_id2w[int(c)] for c in tgt if int(c) not in [bos_id, eos_id, empty_id]]]
+        references.append(r)
 
+        t = [tgt_id2w[int(c)] for c in trainslation if int(c) not in [bos_id, eos_id, empty_id]]
+        translations.append(t)
+
+    print(references[0])
+    print(translations[0])
     score = compute_bleu(references, translations, smooth=True)
     return score[0]
