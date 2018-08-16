@@ -7,7 +7,7 @@ from common.trainer import Trainer
 from models import AttentionSeq2Seq
 
 
-(x_train, t_train), (x_test, t_test) = sequence.load_data('addition.txt')
+(x_train, t_train), (x_test, t_test) = sequence.load_data('date.txt')
 char_to_id, id_to_char = sequence.get_vocab()
 
 x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
