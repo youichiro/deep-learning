@@ -9,13 +9,11 @@ from chainer.dataset.convert import to_device
 digit_pattern = re.compile(r'(\d( \d)*)+')
 
 def clean_ja_text(text):
-    text = text.replace('\n', '')
     text = mojimoji.zen_to_han(text, kana=False)
-    text = digit_pattern.sub('#', text)
+    text = digit_pattern.sub('D', text)
     return text
 
 def clean_en_text(text):
-    text = text.replace('\n', '')
     text = text.lower()
     text = text.replace('.', ' .')
     text = text.replace('?', ' ?')
@@ -26,7 +24,7 @@ def clean_en_text(text):
 def load_corpus(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            text = clean_ja_text(line)
+            text = clean_ja_text(line.replace('\n', ''))
             words = text.split(' ')
             words.append('EOS')
             yield words
