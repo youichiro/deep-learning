@@ -12,8 +12,8 @@ from models import AttentionSeq2Seq
 dataset_file = 'tanaka_ja_en.train'
 max_vocab_size = 10000
 
-(x_train, t_train), (x_test, t_test), \
-(src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = dataset.load_data(dataset_file, max_vocab_size=max_vocab_size)
+(x_train, t_train), (x_test, t_test) = dataset.load_data(dataset_file, max_vocab_size)
+(src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = dataset.get_vocab()
 
 x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
 x_train, t_train = to_gpu(x_train), to_gpu(t_train)
@@ -37,11 +37,11 @@ trainer = Trainer(model, optimizer)
 for i in range(max_epoch):
     trainer.fit(x_train, t_train, max_epoch=1, batch_size=batch_size, eval_interval=20)
 
+    eos_id = tgt_w2id['<eos>']
     for i in range(10):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
-        start_id = tgt[0]
-        trainslation = model.generate(src, start_id, len(tgt))
+        trainslation = model.generate(src, eos_id)
 
         src = ''.join([src_id2w[int(c)] for c in src.flatten()[::-1]])
         tgt = ' '.join([tgt_id2w[int(c)] for c in tgt])
@@ -52,7 +52,8 @@ for i in range(max_epoch):
         print('out:', translation)
         print('---')
 
-    blue_score = eval_blue(model, x_test, t_test, tgt_id2w)
+
+    blue_score = eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id)
     print('BLEU: {:.4f}'.format(blue_score))
 
 model.save_params()

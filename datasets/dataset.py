@@ -3,6 +3,12 @@ import numpy
 from collections import Counter
 
 
+src_w2id = {}
+src_id2w = {}
+tgt_w2id = {}
+tgt_id2w = {}
+
+
 def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
     file_path = os.path.dirname(os.path.abspath(__file__)) + '/' + file_name
     src_sentences, tgt_sentences = [], []
@@ -71,5 +77,22 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
     (x_train, x_test) = x[:split_at], x[split_at:]
     (t_train, t_test) = t[:split_at], t[split_at:]
 
-    return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)
+    return (x_train, t_train), (x_test, t_test)
 
+
+def get_vocab():
+    return (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)
+
+
+def get_symbols():
+    src_symbols = {
+        '<bos>': src_w2id.get('<bos>', None),
+        '<eos>': src_w2id.get('<eos>', None),
+        '<unk>': src_w2id.get('<unk>', None),
+    }
+    tgt_symbols = {
+        '<bos>': tgt_w2id.get('<bos>', None),
+        '<eos>': tgt_w2id.get('<eos>', None),
+        '<unk>': tgt_w2id.get('<unk>', None),
+    }
+    return src_symbols, tgt_symbols

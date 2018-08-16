@@ -115,9 +115,10 @@ class Seq2Seq(BaseModel):
         dout = self.encoder.backward(dh)
         return dout
 
-    def generate(self, xs, start_id, sample_size):
+    def generate(self, xs, eos_id):
+        start_id = int(xs.flatten()[0])
         h = self.encoder.forward(xs)
-        sampled = self.decoder.generate(h, start_id, sample_size)
+        sampled = self.decoder.generate(h, start_id, eos_id)
         return sampled
 
 
@@ -183,14 +184,14 @@ class AttentionDecoder:
 
         return denc_hs
 
-    def generate(self, enc_hs, start_id, sample_size):
+    def generate(self, enc_hs, start_id, eos_id):
         sampled = []
         sample_id = start_id
         h = enc_hs[:, -1]
         self.lstm.set_state(h)
 
-        for _ in range(sample_size):
-            x = np.array([int(sample_id)]).reshape((1, 1))
+        while sample_id != eos_id:
+            x = np.array([sample_id]).reshape((1, 1))
 
             out = self.embed.forward(x)
             dec_hs = self.lstm.forward(out)
@@ -199,6 +200,17 @@ class AttentionDecoder:
             score = self.affine.forward(out)
             sample_id = np.argmax(score.flatten())
             sampled.append(sample_id)
+
+        # for _ in range(sample_size):
+        #     x = np.array([sample_id]).reshape((1, 1))
+
+        #     out = self.embed.forward(x)
+        #     dec_hs = self.lstm.forward(out)
+        #     c = self.attention.forward(enc_hs, dec_hs)
+        #     out = np.concatenate((c, dec_hs), axis=2)
+        #     score = self.affine.forward(out)
+        #     sample_id = np.argmax(score.flatten())
+        #     sampled.append(sample_id)
 
         return sampled
 

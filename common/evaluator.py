@@ -4,6 +4,7 @@ import numpy
 from common.utils import cos_similarity
 from common.bleu import compute_bleu
 
+
 def most_similar(query, word_to_id, id_to_word, word_matrix, top=5):
     if query not in word_to_id:
         print("'{}' is not found.".format(query))
@@ -47,16 +48,16 @@ def eval_seq2seq(model, question, correct, id_to_char, verbos=False, is_reverse=
     return 1 if guess == correct else 0
 
 
-def eval_blue(model, x_test, t_test, tgt_id2w):
+def eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id):
     references = []
     translations = []
+    bos_id = tgt_w2id['<bos>']
+    eos_id = tgt_w2id['<eos>']
 
     for i in range(len(x_test)):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
-        start_id = tgt[0]
-        tgt = tgt[1:]
-        trainslation = model.generate(src, start_id, len(tgt))
+        trainslation = model.generate(src, eos_id)
 
         references.append([[tgt_id2w[int(c)] for c in tgt]])
         translations.append([tgt_id2w[int(c)] for c in trainslation])
