@@ -1,5 +1,6 @@
 import sys
 sys.path.append('..')
+from common.np import np
 from common.time_layers import *
 from common.base_model import BaseModel
 from attention_layer import TimeAttention
@@ -189,7 +190,7 @@ class AttentionDecoder:
         self.lstm.set_state(h)
 
         for _ in range(sample_size):
-            x = np.array([sample_id]).reshape((1, 1))
+            x = np.array([int(sample_id)]).reshape((1, 1))
 
             out = self.embed.forward(x)
             dec_hs = self.lstm.forward(out)
@@ -198,6 +199,8 @@ class AttentionDecoder:
             score = self.affine.forward(out)
             sample_id = np.argmax(score.flatten())
             sampled.append(sample_id)
+
+        return sampled
 
 
 class AttentionSeq2Seq(Seq2Seq):

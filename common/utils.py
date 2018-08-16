@@ -119,12 +119,12 @@ def eval_seq2seq(model, question, correct, id_to_char, verbos=False, is_reverse=
 
     question = ''.join([id_to_char[int(c)] for c in question.flatten()])
     correct = ''.join([id_to_char[int(c)] for c in correct])
-    quess = ''.join([id_to_char[int(c)] for c in guess])
+    guess = ''.join([id_to_char[int(c)] for c in guess])
 
     if verbos:
         if is_reverse:
             question = question[::-1]
-        
+
         print('Q', question)
         print('T', correct)
         if correct == guess:
@@ -132,5 +132,5 @@ def eval_seq2seq(model, question, correct, id_to_char, verbos=False, is_reverse=
         else:
             print('[ng]', guess)
         print('---')
-    
+
     return 1 if guess == correct else 0
