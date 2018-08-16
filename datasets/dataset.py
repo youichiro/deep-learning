@@ -11,8 +11,8 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
 
     for line in open(file_path, 'r', encoding='utf8'):
         src, tgt = line.replace('\n', '').split('\t')
-        src_words = src.split()
-        tgt_words = tgt.split()
+        src_words = src.split() + ['<eos>']
+        tgt_words = tgt.split() + ['<eos>']
 
         src_sentences.append(src_words)
         tgt_sentences.append(tgt_words)
@@ -47,12 +47,12 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
 
     for src in x:
         if src_unk in src:
-            src_w2id['UNK'] = src_unk
+            src_w2id['<unk>'] = src_unk
             break
 
     for tgt in t:
         if tgt_unk in tgt:
-            tgt_w2id['UNK'] = tgt_unk
+            tgt_w2id['<unk>'] = tgt_unk
             break
 
     src_id2w = {v: k for k, v in src_w2id.items()}

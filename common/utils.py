@@ -54,7 +54,6 @@ def get_vocab(file_path, max_vocab_size, min_word_freq):
     id_to_word = {v: k for k, v in word_to_id.items()}
     return corpus, word_to_id, id_to_word
 
-
 def create_contexts_target(corpus, window_size=5):
     target = corpus[window_size: - window_size]
     contexts = [[corpus[idx + window]
@@ -66,23 +65,6 @@ def cos_similarity(x, y):
     nx = x / (numpy.sqrt(np.sum(x ** 2)) + 1e-8)
     ny = y / (numpy.sqrt(np.sum(y ** 2)) + 1e-8)
     return np.dot(nx, ny)
-
-def most_similar(query, word_to_id, id_to_word, word_matrix, top=5):
-    if query not in word_to_id:
-        print("'{}' is not found.".format(query))
-        return
-    query_id = word_to_id[query]
-    query_vec = word_matrix[query_id]
-    vocab_size = len(word_to_id)
-    similarities = numpy.array([cos_similarity(word_matrix[i], query_vec) for i in range(vocab_size)])
-    count = 0
-    for i in (-1 * similarities).argsort():
-        if id_to_word[i] == query:
-            continue
-        print("{}: {}".format(id_to_word[i], similarities[i]))
-        count += 1
-        if count >= top:
-            return
 
 def to_cpu(x):
     import numpy
@@ -107,28 +89,3 @@ def clip_grads(grads, max_norm):
     if rate < 1:
         for grad in grads:
             grad *= rate
-
-
-def eval_seq2seq(model, question, correct, id_to_char, verbos=False, is_reverse=False):
-    correct = correct.flatten()
-    start_id = correct[0]
-    correct = correct[1:]
-    guess = model.generate(question, start_id, len(correct))
-
-    question = ''.join([id_to_char[int(c)] for c in question.flatten()])
-    correct = ''.join([id_to_char[int(c)] for c in correct])
-    guess = ''.join([id_to_char[int(c)] for c in guess])
-
-    if verbos:
-        if is_reverse:
-            question = question[::-1]
-
-        print('Q', question)
-        print('T', correct)
-        if correct == guess:
-            print('[ok]', guess)
-        else:
-            print('[ng]', guess)
-        print('---')
-
-    return 1 if guess == correct else 0

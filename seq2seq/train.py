@@ -1,11 +1,13 @@
 import sys
 sys.path.append('..')
 from datasets import sequence, dataset
-from common.utils import to_gpu, eval_seq2seq
+from common.utils import to_gpu
 from common.bleu import compute_bleu
+from common.evaluator import eval_blue
 from common.optimizer import Adam
 from common.trainer import Trainer
 from models import AttentionSeq2Seq
+
 
 dataset_file = 'tanaka_ja_en.train'
 max_vocab_size = 10000
@@ -35,31 +37,23 @@ trainer = Trainer(model, optimizer)
 for i in range(max_epoch):
     trainer.fit(x_train, t_train, max_epoch=1, batch_size=batch_size, eval_interval=20)
 
-    references = []
-    translations = []
-
-    for i in range(len(x_test)):
+    for i in range(10):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
-        verbose = i < 10
         start_id = tgt[0]
         tgt = tgt[1:]
         trainslation = model.generate(src, start_id, len(tgt))
 
-        references.append([[tgt_id2w[int(c)] for c in tgt]])
-        translations.append([tgt_id2w[int(c)] for c in trainslation])        
+        src = ''.join([src_id2w[int(c)] for c in src.flatten()[::-1]])
+        tgt = ' '.join([tgt_id2w[int(c)] for c in tgt])
+        translation = ' '.join([tgt_id2w[int(c)] for c in trainslation])
 
-        # src = ''.join([src_id2w[int(c)] for c in src.flatten()[::-1]])
-        # tgt = ' '.join([tgt_id2w[int(c)] for c in tgt])
-        # guess = ' '.join([tgt_id2w[int(c)] for c in guess])
-
-        # if verbose:
-        #     print('src:', src)
-        #     print('tgt:', tgt)
-        #     print('out:', guess)
-        #     print('---')
-
-    blue_score = compute_bleu(references, translations, smooth=True)[0]
+        print('src:', src)
+        print('tgt:', tgt)
+        print('out:', translation)
+        print('---')
+    
+    blue_score = eval_blue(model, x_test, t_test, tgt_id2w)
     print('BLEU: {:.4f}'.format(blue_score))
 
 model.save_params()
