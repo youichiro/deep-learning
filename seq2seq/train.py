@@ -60,6 +60,6 @@ for i in range(max_epoch):
         #     print('---')
 
     blue_score = compute_bleu(references, translations, smooth=True)[0]
-    print('BLEU:', blue_score)
+    print('BLEU: {:.4f}'.format(blue_score))
 
 model.save_params()

@@ -66,15 +66,10 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
     x = x[indices]
     t = t[indices]
 
-    # 10% for validation set
-    split_at = len(x) - len(x) // 10
+    # 1% for test set
+    split_at = len(x) - len(x) // 100
     (x_train, x_test) = x[:split_at], x[split_at:]
     (t_train, t_test) = t[:split_at], t[split_at:]
 
     return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)
-
-
-if __name__ == '__main__':
-    (x_train, t_train), (x_test, t_test), \
-    (src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = load_data('tanaka_ja_en_000.1000.train', max_vocab_size=50000)
 
