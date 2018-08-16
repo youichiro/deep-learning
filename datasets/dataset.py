@@ -8,7 +8,7 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
     src_sentences, tgt_sentences = [], []
     src_counter = Counter()
     tgt_counter = Counter()
-    
+
     for line in open(file_path, 'r', encoding='utf8'):
         src, tgt = line.replace('\n', '').split('\t')
         src_words = src.split()
@@ -19,13 +19,13 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
 
         for word in src.split():
             src_counter[word] += 1
-        
+
         for word in tgt.split():
             tgt_counter[word] += 1
-        
+
     src_vocab = [w for w, f in src_counter.most_common(max_vocab_size) if f > min_word_freq]
     tgt_vocab = [w for w, f in tgt_counter.most_common(max_vocab_size) if f > min_word_freq]
-    
+
     src_w2id = {w: i for i, w in enumerate(src_vocab + [' '])}
     tgt_w2id = {w: i for i, w in enumerate(tgt_vocab + [' '])}
     src_unk = len(src_w2id)
@@ -49,15 +49,15 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
         if src_unk in src:
             src_w2id['UNK'] = src_unk
             break
-    
+
     for tgt in t:
         if tgt_unk in tgt:
             tgt_w2id['UNK'] = tgt_unk
             break
-    
+
     src_id2w = {v: k for k, v in src_w2id.items()}
     tgt_id2w = {v: k for k, v in tgt_w2id.items()}
-    
+
      # shuffle
     indices = numpy.arange(len(x))
     if seed is not None:
@@ -77,4 +77,4 @@ def load_data(file_name, max_vocab_size=50000, min_word_freq=0, seed=1984):
 if __name__ == '__main__':
     (x_train, t_train), (x_test, t_test), \
     (src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = load_data('tanaka_ja_en_000.1000.train', max_vocab_size=50000)
-    
+
