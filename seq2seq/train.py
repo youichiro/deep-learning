@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
-import numpy
 from datasets import sequence
+from common.utils import to_gpu
 from common.optimizer import Adam
 from common.trainer import Trainer
 from models import AttentionSeq2Seq
@@ -11,6 +11,8 @@ from models import AttentionSeq2Seq
 char_to_id, id_to_char = sequence.get_vocab()
 
 x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
+x_train = to_gpu(x_train)
+t_train = to_gpu(t_train)
 
 vocab_size = len(char_to_id)
 wordvec_size = 16

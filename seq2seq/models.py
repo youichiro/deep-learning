@@ -27,7 +27,7 @@ class Encoder:
         hs = self.lstm.forward(xs)
         self.hs = hs
         return hs[:, -1, :]
-        
+
     def backward(self, dh):
         dhs = np.zeros_like(self.hs)
         dhs[:, -1, :] = dh
@@ -125,7 +125,7 @@ class AttentionEncoder(Encoder):
         xs = self.embed.forward(xs)
         hs = self.lstm.forward(xs)
         return hs
-    
+
     def backward(self, dhs):
         dout = self.lstm.backward(dhs)
         dout = self.embed.backward(dout)
@@ -136,7 +136,7 @@ class AttentionDecoder:
     def __init__(self, vocab_size, wordvec_size, hidden_size):
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
-        
+
         embed_W = (rn(V, D) / 100).astype('f')
         lstm_Wx = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
         lstm_Wh = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
@@ -196,7 +196,6 @@ class AttentionDecoder:
             c = self.attention.forward(enc_hs, dec_hs)
             out = np.concatenate((c, dec_hs), axis=2)
             score = self.affine.forward(out)
-
             sample_id = np.argmax(score.flatten())
             sampled.append(sample_id)
 

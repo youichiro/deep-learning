@@ -29,6 +29,7 @@ def load_data(file_name='addition.txt', seed=1984):
     questions, answers = [], []
 
     for line in open(file_path, 'r'):
+        line = line.replace('\n', '')
         idx = line.find('_')
         questions.append(line[:idx])
         answers.append(line[idx:-1])
@@ -45,6 +46,7 @@ def load_data(file_name='addition.txt', seed=1984):
 
     for i, sentence in enumerate(questions):
         x[i] = [char_to_id[c] for c in list(sentence)]
+
     for i, sentence in enumerate(answers):
         t[i] = [char_to_id[c] for c in list(sentence)]
 

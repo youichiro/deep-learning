@@ -29,8 +29,8 @@ class Trainer:
             t = t[idx]
 
             for iters in range(max_iters):
-                batch_x = x[iters*batch_size:(iter+1)*batch_size]
-                batch_t = t[iters*batch_size:(iter+1)*batch_size]
+                batch_x = x[iters*batch_size:(iters+1)*batch_size]
+                batch_t = t[iters*batch_size:(iters+1)*batch_size]
 
                 loss = model.forward(batch_x, batch_t)
                 model.backward()
@@ -40,7 +40,7 @@ class Trainer:
                 optimizer.update(params, grads)
                 total_loss += loss
                 loss_count += 1
-                
+
                 if (eval_interval is not None) and (iters % eval_interval) == 0:
                     avg_loss = total_loss / loss_count
                     elapsed_time = time.time() - start_tile
@@ -48,7 +48,7 @@ class Trainer:
                           % (self.current_epoch + 1, iter + 1, max_iters, elapsed_time, avg_loss))
                     self.loss_list.append(float(avg_loss))
                     total_loss, loss_count = 0, 0
-            
+
             self.current_epoch += 1
 
 

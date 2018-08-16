@@ -19,7 +19,7 @@ class LSTM:
         g = A[:, H:2*H]
         i = A[:, 2*H:3*H]
         o = A[:, 3*H:]
-        
+
         f = sigmoid(f)
         g = np.tanh(g)
         i = sigmoid(i)
@@ -94,9 +94,9 @@ class TimeLSTM:
             layer = LSTM(*self.params)
             self.h, self.c = layer.forward(xs[:, t, :], self.h, self.c)
             hs[:, t, :] = self.h
-            
+
             self.layers.append(layer)
-        
+
         return hs
 
     def backward(self, dhs):
@@ -114,7 +114,7 @@ class TimeLSTM:
             dxs[:, t, :] = dx
             for i, grad in enumerate(layer.grads):
                 grads[i] += grad
-        
+
         for i, grad in enumerate(grads):
             self.grads[i][...] = grad
         self.dh = dh
@@ -183,7 +183,7 @@ class TimeAffine:
 
         dout = dout.reshape(N * T, -1)
         rx = x.reshape(N * T, -1)
-        
+
         db = np.sum(dout, axis=0)
         dW = np.dot(rx.T, dout)
         dx = np.dot(dout, W.T)
@@ -211,7 +211,7 @@ class TimeSoftmaxWithLoss:
         xs = xs.reshape(N * T, V)
         ts = ts.reshape(N * T)
         mask = mask.reshape(N * T)
-        
+
         ys = softmax(xs)
         ls = np.log(ys[np.arange(N * T), ts])
         ls *= mask
@@ -267,7 +267,7 @@ class TimeBiLSTM:
         o1 = self.forward_lstm.forward(xs)
         o2 = self.backward_lstm.forward(xs[:, ::-1])
         o2 = o2[:, ::-1]
-        
+
         out = np.concatenate((o1, o2), axis=2)
         return out
 
@@ -275,7 +275,7 @@ class TimeBiLSTM:
         H = dhs.shape[2] // 2
         do1 = dhs[:, :, :H]
         do2 = dhs[:,:, H:]
-        
+
         dxs1 = self.forward_lstm.backward(do1)
         do2 = do2[:, ::-1]
         dxs2 = self.backward_lstm.backward(do2)
