@@ -12,8 +12,8 @@ from models import AttentionSeq2Seq
 dataset_file = 'tanaka_ja_en.train'
 max_vocab_size = 10000
 
-(x_train, t_train), (x_test, t_test) = dataset.load_data(dataset_file, max_vocab_size)
-(src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = dataset.get_vocab()
+(x_train, t_train), (x_test, t_test), \
+(src_w2id, tgt_w2id), (src_id2w, tgt_id2w) = dataset.load_data(dataset_file, max_vocab_size)
 
 x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
 x_train, t_train = to_gpu(x_train), to_gpu(t_train)
