@@ -207,12 +207,72 @@ class AttentionDecoder:
         return sampled
 
 
-
 class AttentionSeq2Seq(Seq2Seq):
     def __init__(self, src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size):
         Vs, Vt, D, H = src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size
         self.encoder = AttentionEncoder(Vs, D, H)
         self.decoder = AttentionDecoder(Vt, D, H)
+        self.softmax = TimeSoftmaxWithLoss()
+
+        self.params = self.encoder.params + self.decoder.params
+        self.grads = self.encoder.grads + self.decoder.grads
+
+
+class AttnBiEncoder(AttentionEncoder):
+    def __init__(self, vocab_size, wordvec_size, hidden_size):
+        V, D, H = vocab_size, wordvec_size, hidden_size
+        rn = np.random.randn
+
+        embed_W = (rn(V, D) / 100).astype('f')
+        lstm_Wx1 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        lstm_Wh1 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        lstm_b1 = np.zeros(4 * H).astype('f')
+        lstm_Wx2 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        lstm_Wh2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        lstm_b2 = np.zeros(4 * H).astype('f')
+
+        self.embed = TimeEmbedding(embed_W)
+        self.lstm = TimeBiLSTM(lstm_Wx1, lstm_Wh1, lstm_b1,
+                               lstm_Wx2, lstm_Wh2, lstm_b2, stateful=False)
+        
+        self.params = self.embed.params + self.lstm.params
+        self.grads = self.embed.grads + self.lstm.grads
+        self.hs = None
+
+
+class AttnBiDecoder(AttentionDecoder):
+    def __init__(self, vocab_size, wordvec_size, hidden_size):
+        V, D, H = vocab_size, wordvec_size, hidden_size
+        rn = np.random.randn
+
+        embed_W = (rn(V, D) / 100).astype('f')
+        lstm_Wx1 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        lstm_Wh1 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        lstm_b1 = np.zeros(4 * H).astype('f')
+        lstm_Wx2 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        lstm_Wh2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        lstm_b2 = np.zeros(4 * H).astype('f')
+        affine_W = (rn(2*H, V) / np.sqrt(H)).astype('f')
+        affine_b = np.zeros(V).astype('f')
+
+        self.embed = TimeEmbedding(embed_W)
+        self.lstm = TimeBiLSTM(lstm_Wx1, lstm_Wh1, lstm_b1,
+                               lstm_Wx2, lstm_Wh2, lstm_b2, stateful=True)
+        self.attention = TimeAttention()
+        self.affine = TimeAffine(affine_W, affine_b)
+        layers = [self.embed, self.lstm, self.attention, self.affine]
+
+        self.params, self.grads = [], []
+        for layer in layers:
+            self.params += layer.params
+            self.grads += layer.grads
+
+
+class AttnBiSeq2Seq(Seq2Seq):
+    def __init__(self, src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size):
+        Vs, Vt, D, H = src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size
+        self.encoder = AttnBiEncoder(Vs, D, H)
+        self.decoder = AttnBiDecoder(Vt, D, H)
         self.softmax = TimeSoftmaxWithLoss()
 
         self.params = self.encoder.params + self.decoder.params

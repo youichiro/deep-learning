@@ -6,7 +6,7 @@ from common.bleu import compute_bleu
 from common.evaluator import eval_blue
 from common.optimizer import Adam
 from common.trainer import Trainer
-from models import AttentionSeq2Seq
+from models import AttentionSeq2Seq, AttnBiSeq2Seq
 
 
 dataset_file = 'tanaka_ja_en.train'
@@ -33,7 +33,8 @@ batch_size = 300
 max_epoch = 30
 # max_grad = 5.0
 
-model = AttentionSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
+# model = AttentionSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
+model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
