@@ -218,7 +218,7 @@ class AttentionSeq2Seq(Seq2Seq):
         self.grads = self.encoder.grads + self.decoder.grads
 
 
-class AttnBiEncoder(AttentionEncoder):
+class AttnBiEncoder:
     def __init__(self, vocab_size, wordvec_size, hidden_size):
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
@@ -239,25 +239,32 @@ class AttnBiEncoder(AttentionEncoder):
         self.grads = self.embed.grads + self.lstm.grads
         self.hs = None
 
+    def forward(self, xs):
+        xs = self.embed.forward(xs)
+        hs = self.lstm.forward(xs)
+        return hs
+
+    def backward(self, dhs):
+        dout = self.lstm.backward(dhs)
+        dout = self.embed.backward(dout)
+        return dout
+
 
 class AttnBiDecoder(AttentionDecoder):
     def __init__(self, vocab_size, wordvec_size, hidden_size):
         V, D, H = vocab_size, wordvec_size, hidden_size
+        H = H * 2  # 順方向と逆方向が足し合わされた行列を受け取るため
         rn = np.random.randn
 
         embed_W = (rn(V, D) / 100).astype('f')
-        lstm_Wx1 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
-        lstm_Wh1 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
-        lstm_b1 = np.zeros(4 * H).astype('f')
-        lstm_Wx2 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
-        lstm_Wh2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
-        lstm_b2 = np.zeros(4 * H).astype('f')
+        lstm_Wx = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        lstm_Wh = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        lstm_b = np.zeros(4 * H).astype('f')
         affine_W = (rn(2*H, V) / np.sqrt(H)).astype('f')
         affine_b = np.zeros(V).astype('f')
 
         self.embed = TimeEmbedding(embed_W)
-        self.lstm = TimeBiLSTM(lstm_Wx1, lstm_Wh1, lstm_b1,
-                               lstm_Wx2, lstm_Wh2, lstm_b2, stateful=True)
+        self.lstm = TimeLSTM(lstm_Wx, lstm_Wh, lstm_b, stateful=True)
         self.attention = TimeAttention()
         self.affine = TimeAffine(affine_W, affine_b)
         layers = [self.embed, self.lstm, self.attention, self.affine]

@@ -262,15 +262,14 @@ class TimeBiLSTM:
         self.backward_lstm = TimeLSTM(Wx2, Wh2, b2, stateful)
         self.params = self.forward_lstm.params + self.backward_lstm.params
         self.grads = self.forward_lstm.grads + self.backward_lstm.grads
-        self.dh = None
 
     def forward(self, xs):
-        o1 = self.forward_lstm.forward(xs)
-        o2 = self.backward_lstm.forward(xs[:, ::-1])
-        o2 = o2[:, ::-1]
+        hs1 = self.forward_lstm.forward(xs)
+        hs2 = self.backward_lstm.forward(xs[:, ::-1])
+        hs2 = hs2[:, ::-1]
 
-        out = np.concatenate((o1, o2), axis=2)
-        return out
+        hs = np.concatenate((hs1, hs2), axis=2)
+        return hs
 
     def backward(self, dhs):
         H = dhs.shape[2] // 2
@@ -283,16 +282,4 @@ class TimeBiLSTM:
         dxs2 = dxs2[:, ::-1]
         dxs = dxs1 + dxs2
 
-        dh1 = self.forward_lstm.dh
-        dh2 = self.backward_lstm.dh
-        self.dh = dh1 + dh2
-
         return dxs
-
-    def set_state(self, h, c=None):
-        self.forward_lstm.set_state(h, c)
-        self.backward_lstm.set_state(h, c)
-
-    def reset_state(self):
-        self.forward_lstm.reset_state()
-        self.backward_lstm.reset_state()
