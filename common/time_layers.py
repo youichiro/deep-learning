@@ -262,6 +262,7 @@ class TimeBiLSTM:
         self.backward_lstm = TimeLSTM(Wx2, Wh2, b2, stateful)
         self.params = self.forward_lstm.params + self.backward_lstm.params
         self.grads = self.forward_lstm.grads + self.backward_lstm.grads
+        self.dh = None
 
     def forward(self, xs):
         o1 = self.forward_lstm.forward(xs)
@@ -274,7 +275,7 @@ class TimeBiLSTM:
     def backward(self, dhs):
         H = dhs.shape[2] // 2
         do1 = dhs[:, :, :H]
-        do2 = dhs[:,:, H:]
+        do2 = dhs[:, :, H:]
 
         dxs1 = self.forward_lstm.backward(do1)
         do2 = do2[:, ::-1]
@@ -282,4 +283,16 @@ class TimeBiLSTM:
         dxs2 = dxs2[:, ::-1]
         dxs = dxs1 + dxs2
 
+        dh1 = self.forward_lstm.dh
+        dh2 = self.backward_lstm.dh
+        self.dh = dh1 + dh2
+
         return dxs
+
+    def set_state(self, h, c=None):
+        self.forward_lstm.set_state(h, c)
+        self.backward_lstm.set_state(h, c)
+
+    def reset_state(self):
+        self.forward_lstm.reset_state()
+        self.backward_lstm.reset_state()
