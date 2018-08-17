@@ -92,10 +92,10 @@ class Decoder:
 
 
 class Seq2Seq(BaseModel):
-    def __init__(self, vocab_size, wordvec_size, hidden_size):
-        V, D, H = vocab_size, wordvec_size, hidden_size
-        self.encoder = Encoder(V, D, H)
-        self.decoder = Decoder(V, D, H)
+    def __init__(self, src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size):
+        Vs, Vt, D, H = src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size
+        self.encoder = Encoder(Vs, D, H)
+        self.decoder = Decoder(Vt, D, H)
         self.softmax = TimeSoftmaxWithLoss()
 
         self.params = self.encoder.params + self.decoder.params
@@ -191,6 +191,9 @@ class AttentionDecoder:
         self.lstm.set_state(h)
 
         while sample_id != eos_id:
+            if len(sampled) > 30:
+                break
+
             x = np.array([int(sample_id)]).reshape((1, 1))
 
             out = self.embed.forward(x)
@@ -202,6 +205,7 @@ class AttentionDecoder:
             sampled.append(sample_id)
 
         return sampled
+
 
 
 class AttentionSeq2Seq(Seq2Seq):
