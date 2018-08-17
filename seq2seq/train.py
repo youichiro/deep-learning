@@ -33,7 +33,6 @@ batch_size = 300
 max_epoch = 30
 # max_grad = 5.0
 
-# model = AttentionSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
