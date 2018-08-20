@@ -234,7 +234,7 @@ class AttnBiEncoder:
         self.embed = TimeEmbedding(embed_W)
         self.lstm = TimeBiLSTM(lstm_Wx1, lstm_Wh1, lstm_b1,
                                lstm_Wx2, lstm_Wh2, lstm_b2, stateful=False)
-        
+
         self.params = self.embed.params + self.lstm.params
         self.grads = self.embed.grads + self.lstm.grads
         self.hs = None

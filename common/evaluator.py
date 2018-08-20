@@ -53,7 +53,7 @@ def eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id):
     translations = []
     bos_id = tgt_w2id['<bos>']
     eos_id = tgt_w2id['<eos>']
-    empty_id = tgt_w2id[' ']
+    empty_id = tgt_w2id['<ignore>']
 
     for i in range(len(x_test)):
         src, tgt = x_test[[i]], t_test[[i]]
@@ -70,3 +70,4 @@ def eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id):
     print(translations[0])
     score = compute_bleu(references, translations, smooth=True)
     return score[0]
+

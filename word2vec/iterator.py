@@ -22,7 +22,7 @@ class WindowIterator:
     def __next__(self):
         if self.is_new_epoch:
             self.epoch += 1
-        
+
         if not self.repeat and self.epoch > 0:
             raise StopIteration
         elif self.repeat and self.epoch > self.max_epoch - 1:
@@ -46,5 +46,5 @@ class WindowIterator:
             self.iteration += 1
             self.is_new_epoch = False
             self.current_position = i_end
-        
+
         return contexts, target

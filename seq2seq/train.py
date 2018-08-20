@@ -10,12 +10,13 @@ from models import AttentionSeq2Seq, AttnBiSeq2Seq
 
 
 dataset_file = 'tanaka_ja_en.train'
-max_vocab_size = 10000
+max_vocab_size = 50000
+min_word_freq = 3
 
 (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w) \
-                                        = dataset.load_data(dataset_file, max_vocab_size)
+                            = dataset.load_data(dataset_file, max_vocab_size, min_word_freq)
 
-x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
+# x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
 x_train, t_train = to_gpu(x_train), to_gpu(t_train)
 x_test, t_test = to_gpu(x_test), to_gpu(t_test)
 
@@ -46,8 +47,8 @@ for i in range(max_epoch):
         tgt = tgt.flatten()
         trainslation = model.generate(src, eos_id)
 
-        src = ''.join([src_id2w[int(c)] for c in src.flatten()[::-1]])
-        tgt = ' '.join([tgt_id2w[int(c)] for c in tgt])
+        src = ''.join([src_id2w[int(c)] for c in src.flatten()]).replace('<ignore>', '')
+        tgt = ' '.join([tgt_id2w[int(c)] for c in tgt]).replace('<ignore>', '')
         translation = ' '.join([tgt_id2w[int(c)] for c in trainslation])
 
         print('src:', src)
