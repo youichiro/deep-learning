@@ -24,6 +24,7 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=19
     for src, tgt in zip(tqdm(src_lines), tgt_lines):
         src_words = src.replace('\n', '').split()
         tgt_words = tgt.replace('\n', '').split()
+        tgt_words = ['<bos>'] + tgt_words + ['<eos>']
 
         if not min_len <= len(src_words) <= max_len or not min_len <= len(tgt_words) <= max_len:
             continue
@@ -76,7 +77,7 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=19
     x = x[indices]
     t = t[indices]
 
-    # 1k test set
-    (x_test, x_train) = x[:test_size], x[test_size:]
-    (t_test, t_train) = t[:test_size], t[test_size:]
-    return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)
+    # separate train and test
+    x_test, x_train = x[:test_size], x[test_size:]
+    t_test, t_train = t[:test_size], t[test_size:]
+    return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id, src_id2w, tgt_id2w)

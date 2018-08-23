@@ -66,8 +66,8 @@ def eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id):
         t = [tgt_id2w[int(c)] for c in trainslation if int(c) not in [bos_id, eos_id, empty_id]]
         translations.append(t)
 
-    print(references[0])
-    print(translations[0])
+    print('ref: ' + ' '.join(references[0][0]))
+    print('out: ' + ' '.join(translations[0]))
     score = compute_bleu(references, translations, smooth=True)
     return score[0]
 
