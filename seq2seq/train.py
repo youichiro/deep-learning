@@ -37,10 +37,16 @@ tgt_vocab_size = len(tgt_w2id)
 vocabs = { 'src_w2id': src_w2id, 'src_id2w': src_id2w,
            'tgt_w2id': tgt_w2id, 'tgt_id2w': tgt_id2w }
 
-print('\nsrc vocab size:', src_vocab_size)
+print('\n---', save_dir, '---')
+print('src vocab size:', src_vocab_size)
 print('tgt vocab size:', tgt_vocab_size)
 print('train size:', len(x_train))
 print('test size:', len(x_test))
+print('\nwordvec size:', wordvec_size)
+print('hidden size:', hidden_size)
+print('batch size:', batch_size)
+print('max epoch:', max_epoch)
+print('max grad:', max_grad)
 print()
 
 # train

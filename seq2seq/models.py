@@ -184,14 +184,14 @@ class AttentionDecoder:
 
         return denc_hs
 
-    def generate(self, enc_hs, start_id, eos_id):
+    def generate(self, enc_hs, start_id, eos_id, max_len=30):
         sampled = []
         sample_id = start_id
         h = enc_hs[:, -1]
         self.lstm.set_state(h)
 
         while sample_id != eos_id:
-            if len(sampled) > 30:
+            if len(sampled) > max_len:
                 break
 
             x = np.array([int(sample_id)]).reshape((1, 1))
