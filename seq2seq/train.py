@@ -11,9 +11,9 @@ from models import AttnBiSeq2Seq
 from iterator import Iterator
 
 
-src_file = 'wmt16.100k.de'
-tgt_file = 'wmt16.100k.en'
-max_vocab_size = 20000
+src_file = 'wmt16.1M.de'
+tgt_file = 'wmt16.1M.en'
+max_vocab_size = 30000
 min_word_freq = 3
 test = True
 
@@ -23,11 +23,6 @@ if test:
 else:
     (x_train, t_train), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w) \
                  = load_data(src_file, tgt_file, max_vocab_size, min_word_freq, test=test)
-
-
-# x_train, t_train = to_gpu(x_train), to_gpu(t_train)
-# if test:
-#     x_test, t_test = to_gpu(x_test), to_gpu(t_test)
 
 src_vocab_size = len(src_w2id)
 tgt_vocab_size = len(tgt_w2id)
@@ -40,17 +35,17 @@ if test:
 
 wordvec_size = 300
 hidden_size = 300
-batch_size = 100
+batch_size = 300
 max_epoch = 30
-eval_interval = 20
-# max_grad = 5.0
+eval_interval = 100
+max_grad = 5.0
 
 train_iter = Iterator(x_train, t_train, batch_size, max_epoch)
 model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
-trainer.fit(train_iter, eval_interval)
+trainer.fit(train_iter, eval_interval, max_grad)
 
 # for i in range(max_epoch):
 #     trainer.fit(x_train, t_train, max_epoch=1, batch_size=batch_size, eval_interval=20)

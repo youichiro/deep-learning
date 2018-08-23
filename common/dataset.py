@@ -3,6 +3,9 @@ import numpy
 from tqdm import tqdm
 from collections import Counter
 
+max_len = 40
+min_len = 4
+
 
 def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, test=True, seed=1984):
     src_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + src_file
@@ -11,26 +14,25 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, test=Tr
     src_counter = Counter()
     tgt_counter = Counter()
 
-    corpus_size = sum([1 for _ in open(src_file_path, 'r')])
+    with open(src_file_path, 'r', encoding='utf-8') as f:
+        src_lines = f.readlines()
+    with open(tgt_file_path, 'r', encoding='utf-8') as f:
+        tgt_lines = f.readlines()
 
-    print('Loading corpus... (%s)' % src_file)
-    with tqdm(total=corpus_size) as pbar:
-        for line in open(src_file_path, 'r', encoding='utf8'):
-            src_words = line.replace('\n', '').split()
-            src_data.append(src_words)
-            for word in src_words:
-                src_counter[word] += 1
-            pbar.update(1)
+    print('Loading corpus... (%s and %s)' % (src_file, tgt_file))
+    for src, tgt in zip(tqdm(src_lines), tgt_lines):
+        src_words = src.replace('\n', '').split()
+        tgt_words = tgt.replace('\n', '').split()
 
-    print('Loading corpus... (%s)' % tgt_file)
-    with tqdm(total=corpus_size) as pbar:
-        for line in open(tgt_file_path, 'r', encoding='utf8'):
-            tgt_words = line.replace('\n', '').split()
-            tgt_words = ['<bos>'] + tgt_words + ['<eos>']
-            tgt_data.append(tgt_words)
-            for word in tgt_words:
-                tgt_counter[word] += 1
-            pbar.update(1)
+        if not min_len <= len(src_words) <= max_len or not min_len <= len(tgt_words) <= max_len:
+            continue
+
+        src_data.append(src_words)
+        tgt_data.append(tgt_words)
+        for w in src_words:
+            src_counter[w] += 1
+        for w in tgt_words:
+            tgt_counter[w] += 1
 
     src_vocab = [w for w, f in src_counter.most_common(max_vocab_size) if f >= min_word_freq]
     tgt_vocab = [w for w, f in tgt_counter.most_common(max_vocab_size) if f >= min_word_freq]

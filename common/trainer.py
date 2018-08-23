@@ -3,7 +3,7 @@ sys.path.append('..')
 import time
 import numpy
 from common.np import np
-from common.utils import clip_grads, to_gpu, to_cpu
+from common.utils import clip_grads, to_gpu
 
 
 class Trainer:
