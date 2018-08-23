@@ -7,7 +7,7 @@ from common.trainer import Word2vecTrainer
 from common.optimizer import Adam
 from cbow import CBOW
 from common.utils import create_contexts_target, get_vocab, to_device
-from word2vec.iterator import WindowIterator
+from common.iterator import WindowIterator
 
 
 window_size = 3

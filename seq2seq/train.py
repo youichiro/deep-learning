@@ -6,7 +6,7 @@ from common.dataset import load_data
 from common.optimizer import Adam
 from common.trainer import Trainer
 from models import AttnBiSeq2Seq
-from iterator import Iterator
+from common.iterator import Iterator
 
 
 # files
