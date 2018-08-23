@@ -3,7 +3,7 @@ sys.path.append('..')
 import time
 import numpy
 from common.np import np
-from common.utils import clip_grads, to_gpu
+from common.utils import clip_grads, to_gpu, to_cpu
 
 
 class Trainer:
@@ -38,7 +38,7 @@ class Trainer:
                 avg_loss = total_loss / loss_count
                 elapsed_time = time.time() - start_tile
                 print('| epoch %d \t| iter %d / %d \t| time %d[s] \t| loss %.2f'
-                        % (iterator.epoch + 1, iterator.iteration + 1, iterator.max_iters, elapsed_time, avg_loss))
+                        % (iterator.epoch + 1, iterator.iteration + 1, iterator.max_iter, elapsed_time, avg_loss))
                 self.loss_list.append(float(avg_loss))
                 total_loss, loss_count = 0, 0
 

@@ -21,18 +21,18 @@ class Iterator:
     def __next__(self):
         if self.is_new_epoch:
             self.epoch += 1
-        
+
         if not self.repeat and self.epoch > 0:
             raise StopIteration
         elif self.repeat and self.epoch > self.max_epoch - 1:
             raise StopIteration
-        
+
         i = self.current_position
         i_end = i + self.batch_size
         position = self.order[i:i_end]
 
-        batch_src = [self.src_data[i] for i in position]
-        batch_tgt = [self.tgt_data[i] for i in position]
+        batch_src = numpy.array([self.src_data[i] for i in position])
+        batch_tgt = numpy.array([self.tgt_data[i] for i in position])
 
         if i_end >= len(self.order):
             numpy.random.shuffle(self.order)

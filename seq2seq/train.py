@@ -13,7 +13,7 @@ from iterator import Iterator
 
 src_file = 'wmt16.100k.de'
 tgt_file = 'wmt16.100k.en'
-max_vocab_size = 50000
+max_vocab_size = 20000
 min_word_freq = 3
 test = True
 
@@ -25,9 +25,9 @@ else:
                  = load_data(src_file, tgt_file, max_vocab_size, min_word_freq, test=test)
 
 
-x_train, t_train = to_gpu(x_train), to_gpu(t_train)
-if test:
-    x_test, t_test = to_gpu(x_test), to_gpu(t_test)
+# x_train, t_train = to_gpu(x_train), to_gpu(t_train)
+# if test:
+#     x_test, t_test = to_gpu(x_test), to_gpu(t_test)
 
 src_vocab_size = len(src_w2id)
 tgt_vocab_size = len(tgt_w2id)
