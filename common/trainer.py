@@ -4,6 +4,7 @@ import time
 import numpy
 from common.np import np
 from common.utils import clip_grads, to_gpu
+from common.evaluator import eval_blue
 
 
 class Trainer:
@@ -13,8 +14,20 @@ class Trainer:
         self.loss_list = []
         self.eval_interval = None
         self.current_epoch = 0
+        self.do_report_translation = False
 
-    def fit(self, iterator, eval_interval=20, max_grad=None):
+    def report_translation(self, src_test, tgt_test, vocabs):
+        self.do_report_translation = True
+        self.src_test = src_test
+        self.tgt_test = tgt_test
+        self.src_w2id, self.src_id2w = vocabs['src_w2id'], vocabs['src_id2w']
+        self.tgt_w2id, self.tgt_id2w = vocabs['tgt_w2id'], vocabs['tgt_id2w']
+
+    def eval_translation(self, model):
+        bleu_score = eval_blue(model, self.src_test, self.tgt_test, self.tgt_id2w, self.tgt_w2id)
+        return bleu_score
+
+    def run(self, iterator, eval_interval=20, max_grad=None):
         self.eval_interval = eval_interval
         model, optimizer = self.model, self.optimizer
         total_loss = 0
@@ -42,6 +55,9 @@ class Trainer:
                 self.loss_list.append(float(avg_loss))
                 total_loss, loss_count = 0, 0
 
+            if iterator.is_last_epoch and self.do_report_translation:
+                bleu_score = self.eval_translation(model)
+                print('blue: %.4f' % bleu_score)
 
 # class Trainer:
 #     def __init__(self, model, optimizer):

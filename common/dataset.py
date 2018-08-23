@@ -5,9 +5,10 @@ from collections import Counter
 
 max_len = 40
 min_len = 4
+test_size = 1000
 
 
-def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, test=True, seed=1984):
+def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=1984):
     src_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + src_file
     tgt_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + tgt_file
     src_data, tgt_data = [], []
@@ -75,12 +76,7 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, test=Tr
     x = x[indices]
     t = t[indices]
 
-    if test:
-        # 1k test set
-        test_set_num = 1000
-        (x_test, x_train) = x[:test_set_num], x[test_set_num:]
-        (t_test, t_train) = t[:test_set_num], t[test_set_num:]
-        return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)
-    else:
-        return (x, t), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)
-
+    # 1k test set
+    (x_test, x_train) = x[:test_size], x[test_size:]
+    (t_test, t_train) = t[:test_size], t[test_size:]
+    return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id), (src_id2w, tgt_id2w)

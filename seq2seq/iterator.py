@@ -14,6 +14,7 @@ class Iterator:
         self.iteration = 0
         self.epoch = 0
         self.is_new_epoch = False
+        self.is_last_epoch = False
 
     def __iter__(self):
         return self
@@ -33,6 +34,11 @@ class Iterator:
 
         batch_src = numpy.array([self.src_data[i] for i in position])
         batch_tgt = numpy.array([self.tgt_data[i] for i in position])
+
+        if i_end + self.batch_size >= len(self.order):
+            self.is_last_epoch = True
+        else:
+            self.is_last_epoch = False
 
         if i_end >= len(self.order):
             numpy.random.shuffle(self.order)
