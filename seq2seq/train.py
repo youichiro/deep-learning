@@ -8,6 +8,7 @@ from common.evaluator import eval_blue
 from common.optimizer import Adam
 from common.trainer import Trainer
 from models import AttnBiSeq2Seq
+from iterator import Iterator
 
 
 src_file = 'wmt16.100k.de'
@@ -41,35 +42,37 @@ wordvec_size = 300
 hidden_size = 300
 batch_size = 100
 max_epoch = 30
+eval_interval = 20
 # max_grad = 5.0
 
+train_iter = Iterator(x_train, t_train, batch_size, max_epoch)
 model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
-# trainer.fit(x_train, t_train, max_epoch=max_epoch, batch_size=batch_size, eval_interval=20)
+trainer.fit(train_iter, eval_interval)
 
-for i in range(max_epoch):
-    trainer.fit(x_train, t_train, max_epoch=1, batch_size=batch_size, eval_interval=20)
+# for i in range(max_epoch):
+#     trainer.fit(x_train, t_train, max_epoch=1, batch_size=batch_size, eval_interval=20)
 
-    eos_id = tgt_w2id['<eos>']
-    for i in range(10):
-        src, tgt = x_test[[i]], t_test[[i]]
-        tgt = tgt.flatten()
-        trainslation = model.generate(src, eos_id)
+#     eos_id = tgt_w2id['<eos>']
+#     for i in range(10):
+#         src, tgt = x_test[[i]], t_test[[i]]
+#         tgt = tgt.flatten()
+#         trainslation = model.generate(src, eos_id)
 
-        src = ' '.join([src_id2w[int(c)] for c in src.flatten()]).replace('<ignore>', '')
-        tgt = ' '.join([tgt_id2w[int(c)] for c in tgt]).replace('<ignore>', '')
-        translation = ' '.join([tgt_id2w[int(c)] for c in trainslation])
+#         src = ' '.join([src_id2w[int(c)] for c in src.flatten()]).replace('<ignore>', '')
+#         tgt = ' '.join([tgt_id2w[int(c)] for c in tgt]).replace('<ignore>', '')
+#         translation = ' '.join([tgt_id2w[int(c)] for c in trainslation])
 
-        print('src:', src)
-        print('tgt:', tgt)
-        print('out:', translation)
-        print('---')
+#         print('src:', src)
+#         print('tgt:', tgt)
+#         print('out:', translation)
+#         print('---')
 
 
-    blue_score = eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id)
-    print('BLEU: {:.4f}'.format(blue_score))
+#     blue_score = eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id)
+#     print('BLEU: {:.4f}'.format(blue_score))
 
 model.save_params('naist_model.pkl')
 vocabs = {
