@@ -1,9 +1,8 @@
 import sys
 sys.path.append('..')
 import time
-import numpy
 from common.np import np
-from common.utils import clip_grads, to_gpu
+from common.utils import to_gpu
 from common.evaluator import eval_blue
 
 
@@ -119,3 +118,15 @@ def remove_duplicate(params, grads):
             if find_flg: break
         if not find_flg: break
     return params, grads
+
+
+def clip_grads(grads, max_norm):
+    total_norm = 0
+    for grad in grads:
+        total_norm += np.sum(grad ** 2)
+    total_norm = np.sqrt(total_norm)
+
+    rate = max_norm / (total_norm + 1e-6)
+    if rate < 1:
+        for grad in grads:
+            grad *= rate

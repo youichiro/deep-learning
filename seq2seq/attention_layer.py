@@ -1,6 +1,6 @@
 import sys
 sys.path.append('..')
-from common.np import np, GPU
+from common.np import np
 from common.layers import Softmax
 
 

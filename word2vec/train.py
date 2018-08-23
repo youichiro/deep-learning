@@ -19,7 +19,6 @@ min_word_freq = 1
 eval_interval = 1000
 
 corpus_file = '../datasets/testdata.txt'
-# corpus_file = '/lab/ogawa/corpora/nikkei/nikkei_all.wakati_unidic.num2symbol_1M.txt'
 
 print('\033[92m[ Hyper parameters ]\033[0m')
 print('- window_size:', window_size)

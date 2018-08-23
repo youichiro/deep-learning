@@ -12,8 +12,7 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=19
     src_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + src_file
     tgt_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + tgt_file
     src_data, tgt_data = [], []
-    src_counter = Counter()
-    tgt_counter = Counter()
+    src_counter, tgt_counter = Counter(), Counter()
 
     with open(src_file_path, 'r', encoding='utf-8') as f:
         src_lines = f.readlines()
@@ -69,15 +68,6 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=19
     src_id2w = {v: k for k, v in src_w2id.items()}
     tgt_id2w = {v: k for k, v in tgt_w2id.items()}
 
-     # shuffle
-    indices = numpy.arange(len(x))
-    if seed is not None:
-        numpy.random.seed(seed)
-    numpy.random.shuffle(indices)
-    x = x[indices]
-    t = t[indices]
-
-    # separate train and test
     x_test, x_train = x[:test_size], x[test_size:]
     t_test, t_train = t[:test_size], t[test_size:]
     return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id, src_id2w, tgt_id2w)

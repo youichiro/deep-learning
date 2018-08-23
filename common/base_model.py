@@ -13,27 +13,21 @@ class BaseModel:
     def forward(self, *args):
         raise NotImplementedError
 
-    def save_params(self, file_name=None):
-        if file_name is None:
-            file_name = self.__class__.__name__ + '.pkl'
+    def backward(self, *args):
+        raise NotImplementedError
 
+    def save_params(self, file_name):
         params = [p.astype(np.float16) for p in self.params]
         if GPU:
             params = [to_cpu(p) for p in params]
-
         with open(file_name, 'wb') as f:
             pickle.dump(params, f)
 
-    def load_params(self, file_name=None):
-        if file_name is None:
-            file_name = self.__class__.__name__ + '.pkl'
-
+    def load_params(self, file_name):
         if '/' in file_name:
             file_name = file_name.replace('/', os.sep)
-
         if not os.path.exists(file_name):
             raise IOError('No file: ', file_name)
-
         with open(file_name, 'rb') as f:
             params = pickle.load(f)
 
@@ -42,4 +36,4 @@ class BaseModel:
             params = [to_gpu(p) for p in params]
 
         for i, params in enumerate(self.params):
-            params[...] = params[i]
+            params[...] = params[i]  # TODO: ここself.params?
