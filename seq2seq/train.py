@@ -3,9 +3,6 @@ import sys
 sys.path.append('..')
 import pickle
 from common.dataset import load_data
-from common.utils import to_gpu
-from common.bleu import compute_bleu
-from common.evaluator import eval_blue
 from common.optimizer import Adam
 from common.trainer import Trainer
 from models import AttnBiSeq2Seq
