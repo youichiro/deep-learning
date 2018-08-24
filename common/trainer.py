@@ -56,7 +56,7 @@ class Trainer:
 
             if iterator.is_new_epoch and self.do_report_translation:
                 bleu_score = self.eval_translation(model)
-                print('blue: %.4f' % bleu_score)
+                print('bleu: %.4f' % bleu_score)
 
 
 class Word2vecTrainer:
