@@ -1,8 +1,8 @@
-from chainer import cuda
 from common.config import GPU, GPU_ID
 
 
 if GPU:
+    from chainer import cuda
     device = GPU_ID
     cuda.get_device(device).use()
     import cupy as np

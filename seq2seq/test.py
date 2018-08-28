@@ -1,9 +1,12 @@
 import pickle
 import numpy
+import matplotlib.pyplot as plt
 from models import AttnBiSeq2Seq
+plt.rcParams["font.family"] = 'sans-serif'
+
 
 save_dir = 'tanaka_ja_en'
-model_file = 'e30-model.pkl'
+model_file = 'e14-model.pkl'
 vocabs_file = 'vocabs.pkl'
 hyper_file = 'hyperparameters.pkl'
 
@@ -22,15 +25,59 @@ tgt_vocab_size = len(tgt_w2id)
 wordvec_size = hypers['wordvec_size']
 hidden_size = hypers['hidden_size']
 
-sent = '誰 が 一番 に 着 く か 私 に は 分か り ま せ ん 。'
-sent_ids = [src_w2id[word] for word in sent.split()]
-src = numpy.array([sent_ids])
-
 model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 model.load_params(save_dir + '/' + model_file)
-predict = model.generate(src, eos_id=tgt_w2id['<eos>'])
+eos_id = tgt_w2id['<eos>']
 
-output = ' '.join([tgt_id2w[int(idx)] for idx in predict])
-print(sent)
-print(output)
 
+def translate(model, src_words):
+    ids = [src_w2id.get(w, src_w2id['<unk>']) for w in src_words]
+    src = numpy.array([ids])
+    predict = model.generate(src, eos_id=eos_id)
+    out_words = [tgt_id2w[int(idx)] for idx in predict]
+    return out_words
+
+
+_idx = 0
+def plot_attention(attention_map, row_labels, column_labels):
+    fig, ax = plt.subplots()
+    ax.pcolor(attention_map, cmap=plt.cm.Greys_r, vmin=0.0, vmax=1.0)
+    ax.patch.set_facecolor('black')
+    ax.set_yticks(numpy.arange(attention_map.shape[0])+0.5, minor=False)
+    ax.set_xticks(numpy.arange(attention_map.shape[1])+0.5, minor=False)
+    ax.invert_yaxis()
+    ax.set_xticklabels(row_labels, minor=False)
+    ax.set_yticklabels(column_labels, minor=False)
+
+    global _idx
+    _idx += 1
+    plt.show()
+
+
+def visualize_attention(model, src_words, tgt_words):
+    x = numpy.array([[src_w2id.get(w, src_w2id['<unk>']) for w in src_words]])
+    t = numpy.array([[tgt_w2id.get(w, tgt_w2id['<unk>']) for w in tgt_words]])
+    model.forward(x, t)
+    d = model.decoder.attention.attention_weights
+    d = numpy.array(d)
+    attention_map = d.reshape(d.shape[0], d.shape[2])
+
+    row_labels = [src_id2w[i] for i in x[0]]
+    column_labels = [tgt_id2w[i] for i in t[0]]
+    column_labels = column_labels[1:]
+    plot_attention(attention_map, row_labels, column_labels)
+
+
+# test sentences
+src_sentence = '私 は テニス 部員 で す 。'
+tgt_sentence = "i 'm in the tennis club ."
+src_words = src_sentence.split()
+tgt_words = tgt_sentence.split()
+
+# translation
+output = ' '.join(translate(model, src_words))
+print('\ninput:', src_sentence)
+print('output:', output)
+
+# plot attention
+visualize_attention(model, src_words, tgt_words)
