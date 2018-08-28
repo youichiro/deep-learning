@@ -24,11 +24,10 @@ class Trainer:
         self.do_report_bleu = True
         self.src_test = src_test
         self.tgt_test = tgt_test
-        self.src_w2id, self.src_id2w = vocabs['src_w2id'], vocabs['src_id2w']
-        self.tgt_w2id, self.tgt_id2w = vocabs['tgt_w2id'], vocabs['tgt_id2w']
+        self.vocabs = vocabs
 
     def culc_bleu(self, model):
-        bleu_score = eval_blue(model, self.src_test, self.tgt_test, self.tgt_id2w, self.tgt_w2id)
+        bleu_score = eval_blue(model, self.src_test, self.tgt_test, self.vocabs)
         return bleu_score
 
     def save_model(self, model, epoch):

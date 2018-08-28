@@ -48,24 +48,27 @@ def eval_seq2seq(model, question, correct, id_to_char, verbos=False, is_reverse=
     return 1 if guess == correct else 0
 
 
-def eval_blue(model, x_test, t_test, tgt_id2w, tgt_w2id):
-    references = []
-    translations = []
+def eval_blue(model, x_test, t_test, vocabs):
+    src_w2id, src_id2w = vocabs['src_w2id'], vocabs['src_id2w']
+    tgt_w2id, tgt_id2w = vocabs['tgt_w2id'], vocabs['tgt_id2w']
     bos_id = tgt_w2id['<bos>']
     eos_id = tgt_w2id['<eos>']
     empty_id = tgt_w2id['<ignore>']
+    references = []
+    translations = []
 
     for i in range(len(x_test)):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
         trainslation = model.generate(src, eos_id)
 
-        r = [[tgt_id2w[int(c)] for c in tgt if int(c) not in [bos_id, eos_id, empty_id]]]
+        r = [[tgt_id2w[int(i)] for i in tgt if int(i) not in [bos_id, eos_id, empty_id]]]
         references.append(r)
 
-        t = [tgt_id2w[int(c)] for c in trainslation if int(c) not in [bos_id, eos_id, empty_id]]
+        t = [tgt_id2w[int(i)] for i in trainslation if int(i) not in [bos_id, eos_id, empty_id]]
         translations.append(t)
 
+    print('src: ' + ' '.join([src_id2w[int(i)] for i in x_test[0]]))
     print('ref: ' + ' '.join(references[0][0]))
     print('out: ' + ' '.join(translations[0]))
     score = compute_bleu(references, translations, smooth=True)
