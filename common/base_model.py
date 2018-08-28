@@ -36,6 +36,6 @@ class BaseModel:
         if GPU:
             params = [to_gpu(p) for p in params]
 
-        for i, param in enumerate(params):
-            self.params[i] = param
+        for i, param in enumerate(self.params):
+            param[...] = params[i]
 

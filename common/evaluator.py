@@ -60,12 +60,12 @@ def eval_blue(model, x_test, t_test, vocabs):
     for i in range(len(x_test)):
         src, tgt = x_test[[i]], t_test[[i]]
         tgt = tgt.flatten()
-        trainslation = model.generate(src, eos_id)
+        translation = model.generate(src, eos_id)
 
         r = [[tgt_id2w[int(i)] for i in tgt if int(i) not in [bos_id, eos_id, empty_id]]]
         references.append(r)
 
-        t = [tgt_id2w[int(i)] for i in trainslation if int(i) not in [bos_id, eos_id, empty_id]]
+        t = [tgt_id2w[int(i)] for i in translation if int(i) not in [bos_id, eos_id, empty_id]]
         translations.append(t)
 
     print('src: ' + ' '.join([src_id2w[int(i)] for i in x_test[0]]))
