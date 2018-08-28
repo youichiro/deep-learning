@@ -12,7 +12,7 @@ from common.iterator import Iterator
 # files
 src_file = 'tanaka.ja.train'
 tgt_file = 'tanaka.en.train'
-save_dir = 'tanaka_ja_en'
+save_dir = 'tanaka_ja_en_2'
 
 # hyperparameter
 max_vocab_size = 30000

@@ -32,8 +32,10 @@ class BaseModel:
             params = pickle.load(f)
 
         params = [p.astype('f') for p in params]
+
         if GPU:
             params = [to_gpu(p) for p in params]
 
-        for i, params in enumerate(self.params):
-            params[...] = params[i]  # TODO: ここself.params?
+        for i, param in enumerate(params):
+            self.params[i] = param
+

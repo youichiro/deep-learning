@@ -36,7 +36,7 @@ class Trainer:
 
     def save_score(self, epoch, loss, bleu):
         with open(self.save_dir + '/score.txt', 'a') as f:
-            f.write('{}\t{}\t{}\n'.format(epoch, loss, bleu))
+            f.write('{}\t{:.4}\t{:.4}\n'.format(epoch, loss, bleu))
 
     def run(self, iterator, eval_interval=20, max_grad=None):
         self.eval_interval = eval_interval
@@ -71,7 +71,7 @@ class Trainer:
                 print('bleu: %.4f' % bleu_score)
 
             if iterator.is_new_epoch:
-                self.save_score(iterator.epoch + 1, avg_loss, bleu_score)
+                self.save_score(iterator.epoch + 1, float(avg_loss), bleu_score)
                 self.save_model(model, iterator.epoch + 1)
                 print('Saved model.')
 
