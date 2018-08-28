@@ -29,7 +29,7 @@ class Trainer:
         return bleu_score
 
     def save_model(self, model, epoch):
-        model.save_params(self.save_dir + '/e' + epoch + '-model.pkl')
+        model.save_params(self.save_dir + '/e' + str(epoch) + '-model.pkl')
 
     def run(self, iterator, eval_interval=20, max_grad=None):
         self.eval_interval = eval_interval

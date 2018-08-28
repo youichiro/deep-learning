@@ -10,18 +10,18 @@ from common.iterator import Iterator
 
 
 # files
-src_file = 'wmt16.1M.de'
-tgt_file = 'wmt16.1M.en'
-save_dir = 'wmt16_de_en_1M'
+src_file = 'tanaka.ja.train'
+tgt_file = 'tanaka.en.train'
+save_dir = 'tanaka_ja_en'
 
 # hyperparameter
 max_vocab_size = 30000
 min_word_freq = 2
 wordvec_size = 300
 hidden_size = 300
-batch_size = 300
+batch_size = 100
 max_epoch = 30
-eval_interval = 100
+eval_interval = 10
 max_grad = 5.0
 
 # dataset
