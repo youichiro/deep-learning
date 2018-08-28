@@ -15,8 +15,10 @@ class Trainer:
         self.eval_interval = None
         self.current_epoch = 0
         self.do_report_bleu = False
-        self.score_file = open(self.save_dir + '/score.txt', 'w')
-        self.score_file.write('epoch\tloss\tbleu\n')
+
+        with open(self.save_dir + '/score.txt', 'w') as f:
+            f.write('epoch\tloss\tbleu\n')
+
 
     def report_bleu(self, src_test, tgt_test, vocabs):
         self.do_report_bleu = True
@@ -31,9 +33,10 @@ class Trainer:
 
     def save_model(self, model, epoch):
         model.save_params(self.save_dir + '/e' + str(epoch) + '-model.pkl')
-    
-    def save_score(self, epoch, loss, bleu):    
-        self.score_file.write('{}\t{}\t{}\n'.format(epoch, loss, bleu))
+
+    def save_score(self, epoch, loss, bleu):
+        with open(self.save_dir + '/score.txt', 'a') as f:
+            f.write('{}\t{}\t{}\n'.format(epoch, loss, bleu))
 
     def run(self, iterator, eval_interval=20, max_grad=None):
         self.eval_interval = eval_interval
@@ -71,8 +74,6 @@ class Trainer:
                 self.save_score(iterator.epoch + 1, avg_loss, bleu_score)
                 self.save_model(model, iterator.epoch + 1)
                 print('Saved model.')
-
-        self.score_file.close()
 
 
 class Word2vecTrainer:
