@@ -3,11 +3,15 @@ import numpy
 from models import AttnBiSeq2Seq
 
 save_dir = ''
-model_file = 'model.pkl'
+model_file = 'e20-model.pkl'
 vocabs_file = 'vocabs.pkl'
+hyper_file = 'hyperparameters.pkl'
 
 with open(save_dir + '/' + vocabs_file, 'rb') as f:
     vocabs = pickle.load(f)
+
+with open(save_dir + '/' + hyper_file, 'rb') as f:
+    hypers = pickle.load(f)
 
 src_w2id = vocabs['src_w2id']
 tgt_w2id = vocabs['tgt_w2id']
