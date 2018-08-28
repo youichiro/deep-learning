@@ -25,7 +25,7 @@ eval_interval = 10
 max_grad = 5.0
 
 # dataset
-(x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id, src_id2w, tgt_id2w) \
+(x_train, t_train), (x_dev, t_dev), (src_w2id, tgt_w2id, src_id2w, tgt_id2w) \
                             = load_data(src_file, tgt_file, max_vocab_size, min_word_freq)
 
 # statistic
@@ -36,7 +36,7 @@ print('\n---', save_dir, '---')
 print('src vocab size:', src_vocab_size)
 print('tgt vocab size:', tgt_vocab_size)
 print('train size:', len(x_train))
-print('test size:', len(x_test))
+print('dev size:', len(x_dev))
 print('\nwordvec size:', wordvec_size)
 print('hidden size:', hidden_size)
 print('batch size:', batch_size)
@@ -65,5 +65,5 @@ model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer, save_dir)
 
-trainer.report_bleu(x_test, t_test, vocabs)
+trainer.report_bleu(x_dev, t_dev, vocabs)
 trainer.run(train_iter, eval_interval, max_grad)

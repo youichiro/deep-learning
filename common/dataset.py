@@ -5,7 +5,7 @@ from collections import Counter
 
 max_len = 40
 min_len = 4
-test_size = 1000
+dev_size = 1000
 
 
 def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=1984):
@@ -68,6 +68,6 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, seed=19
     src_id2w = {v: k for k, v in src_w2id.items()}
     tgt_id2w = {v: k for k, v in tgt_w2id.items()}
 
-    x_test, x_train = x[:test_size], x[test_size:]
-    t_test, t_train = t[:test_size], t[test_size:]
-    return (x_train, t_train), (x_test, t_test), (src_w2id, tgt_w2id, src_id2w, tgt_id2w)
+    x_dev, x_train = x[:dev_size], x[dev_size:]
+    t_dev, t_train = t[:dev_size], t[dev_size:]
+    return (x_train, t_train), (x_dev, t_dev), (src_w2id, tgt_w2id, src_id2w, tgt_id2w)
