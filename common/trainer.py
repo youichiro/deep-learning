@@ -12,7 +12,7 @@ class Trainer:
         self.model = model
         self.optimizer = optimizer
         self.save_dir = save_dir
-        self.loss_list = []
+        self.score_list = []
         self.eval_interval = None
         self.current_epoch = 0
         self.do_report_bleu = False
@@ -30,12 +30,19 @@ class Trainer:
 
     def save_model(self, model, epoch):
         model.save_params(self.save_dir + '/e' + str(epoch) + '-model.pkl')
+    
+    def save_score(self):
+        with open(self.save_dir + '/score.txt', 'w') as f:
+            f.write('epoch\tloss\tbleu\n')
+            for epoch, loss, bleu in self.score_list:
+                f.write('{}\t{}\t{}\n'.format(epoch, loss, bleu))
 
     def run(self, iterator, eval_interval=20, max_grad=None):
         self.eval_interval = eval_interval
         model, optimizer = self.model, self.optimizer
         total_loss = 0
         loss_count = 0
+        bleu_score = 0.0
 
         start_tile = time.time()
         for batch_src, batch_tgt in iterator:
@@ -51,12 +58,11 @@ class Trainer:
             total_loss += loss
             loss_count += 1
 
-            if eval_interval and (iterator.iteration % eval_interval) == 0:
+            if (iterator.iteration % eval_interval) == 0:
                 avg_loss = total_loss / loss_count
                 elapsed_time = time.time() - start_tile
                 print('| epoch %d \t| iter %d / %d \t| time %d[s] \t| loss %.2f'
                         % (iterator.epoch + 1, iterator.iteration, iterator.max_iter, elapsed_time, avg_loss))
-                self.loss_list.append(float(avg_loss))
                 total_loss, loss_count = 0, 0
 
             if iterator.is_new_epoch and self.do_report_bleu:
@@ -64,8 +70,12 @@ class Trainer:
                 print('bleu: %.4f' % bleu_score)
 
             if iterator.is_new_epoch:
+                self.score_list.append([iterator.epoch + 1, float(avg_loss), bleu_score])
                 self.save_model(model, iterator.epoch + 1)
                 print('Saved model.')
+        
+        self.save_score()
+        print('Saved score.')
 
 
 class Word2vecTrainer:
