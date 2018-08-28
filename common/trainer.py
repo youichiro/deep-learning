@@ -1,3 +1,4 @@
+import os
 import sys
 sys.path.append('..')
 import time
@@ -7,24 +8,28 @@ from common.evaluator import eval_blue
 
 
 class Trainer:
-    def __init__(self, model, optimizer):
+    def __init__(self, model, optimizer, save_dir):
         self.model = model
         self.optimizer = optimizer
+        self.save_dir = save_dir
         self.loss_list = []
         self.eval_interval = None
         self.current_epoch = 0
-        self.do_report_translation = False
+        self.do_report_bleu = False
 
-    def report_translation(self, src_test, tgt_test, vocabs):
-        self.do_report_translation = True
+    def report_bleu(self, src_test, tgt_test, vocabs):
+        self.do_report_bleu = True
         self.src_test = src_test
         self.tgt_test = tgt_test
         self.src_w2id, self.src_id2w = vocabs['src_w2id'], vocabs['src_id2w']
         self.tgt_w2id, self.tgt_id2w = vocabs['tgt_w2id'], vocabs['tgt_id2w']
 
-    def eval_translation(self, model):
+    def culc_bleu(self, model):
         bleu_score = eval_blue(model, self.src_test, self.tgt_test, self.tgt_id2w, self.tgt_w2id)
         return bleu_score
+
+    def save_model(self, model, epoch):
+        model.save_params(self.save_dir + '/e' + epoch + '-model.pkl')
 
     def run(self, iterator, eval_interval=20, max_grad=None):
         self.eval_interval = eval_interval
@@ -54,9 +59,13 @@ class Trainer:
                 self.loss_list.append(float(avg_loss))
                 total_loss, loss_count = 0, 0
 
-            if iterator.is_new_epoch and self.do_report_translation:
-                bleu_score = self.eval_translation(model)
+            if iterator.is_new_epoch and self.do_report_bleu:
+                bleu_score = self.culc_bleu(model)
                 print('bleu: %.4f' % bleu_score)
+
+            if iterator.is_new_epoch:
+                self.save_model(model, iterator.epoch + 1)
+                print('Saved model.')
 
 
 class Word2vecTrainer:
