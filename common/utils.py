@@ -9,11 +9,14 @@ from chainer.dataset.convert import to_device
 digit_pattern = re.compile(r'(\d( \d)*)+')
 
 
-def calculate_unknown_ratio(data, unk_id):
+def calc_unk_ratio(data, unk_id, ignore_id):
     if not unk_id:
         return 0.0
-    n_unk = sum([(s == unk_id).sum() for s in data])
-    total = sum([s.size] for s in data)
+    n_unk, total = 0, 0
+    for s in data:
+        for w in s:
+            n_unk += 1 if w == unk_id else 0
+            total += 1 if w != ignore_id else 0
     return n_unk / total
 
 

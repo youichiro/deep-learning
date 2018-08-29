@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 import pickle
 from common.dataset import load_data
-from common.utils import calculate_unknown_ratio
+from common.utils import calc_unk_ratio
 from common.iterator import Iterator
 from models import AttnBiSeq2Seq
 from common.optimizer import Adam
@@ -16,7 +16,7 @@ tgt_file = 'mai_error/mai2000.100k.ans.wkt'
 save_dir = 'mai_error100k'
 
 # hyperparameter
-max_vocab_size = 30000
+max_vocab_size = 40000
 min_word_freq = 1
 wordvec_size = 300
 hidden_size = 300
@@ -28,8 +28,8 @@ max_grad = 10.0
 # dataset
 (x_train, t_train), (x_dev, t_dev), (src_w2id, tgt_w2id, src_id2w, tgt_id2w) \
                             = load_data(src_file, tgt_file, max_vocab_size, min_word_freq)
-src_unk_ratio = calculate_unknown_ratio(x_train, src_w2id.get('<unk>', None))
-tgt_unk_ratio = calculate_unknown_ratio(t_train, tgt_w2id.get('<unk>', None))
+src_unk_ratio = calc_unk_ratio(x_train, src_w2id.get('<unk>', None), src_w2id.get('<ignore>', None))
+tgt_unk_ratio = calc_unk_ratio(t_train, tgt_w2id.get('<unk>', None), tgt_w2id.get('<ignore>', None))
 
 # statistic
 src_vocab_size = len(src_w2id)
