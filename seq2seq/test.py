@@ -2,6 +2,7 @@ import sys
 sys.path.append('..')
 import pickle
 import numpy
+from tqdm import tqdm
 from models import AttnBiSeq2Seq
 from common.bleu import compute_bleu
 
@@ -99,11 +100,11 @@ assert len(src_test_data) == len(tgt_test_data)
 
 print('model: {}/{}'.format(save_dir, model_file))
 print('test data: {}'.format(src_test_file))
-print('           {}'.format(tgt_test_file))
+print('           {}\n'.format(tgt_test_file))
 
 reference_data = []
 translation_data = []
-for i in range(len(src_test_data)):
+for i in tqdm(range(len(src_test_data))):
     src_words = src_test_data[i].split()
     tgt_words = tgt_test_data[i].split()
     out_words = translate(model, src_words)

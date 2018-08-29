@@ -184,7 +184,7 @@ class AttentionDecoder:
 
         return denc_hs
 
-    def generate(self, enc_hs, start_id, eos_id, max_len=30):
+    def generate(self, enc_hs, start_id, eos_id, max_len=40):
         sampled = []
         sample_id = start_id
         h = enc_hs[:, -1]
