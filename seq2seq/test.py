@@ -1,10 +1,18 @@
+import sys
+sys.path.append('..')
 import pickle
 import numpy
 import matplotlib.pyplot as plt
 from models import AttnBiSeq2Seq
+from common.bleu import compute_bleu
 plt.rcParams["font.family"] = 'sans-serif'
 
 
+# test data
+src_test_file = '../datasets/naist/naist_gawonide.err.wkt'
+tgt_test_file = '../datasets/naist/naist_gawonide.ans.wkt'
+
+# load model
 save_dir = 'tanaka_ja_en'
 model_file = 'e14-model.pkl'
 vocabs_file = 'vocabs.pkl'
@@ -81,3 +89,34 @@ print('output:', output)
 
 # plot attention
 visualize_attention(model, src_words, tgt_words)
+
+
+# test
+with open(src_test_file, 'r') as f:
+    src_test_data = f.readlines()
+with open(tgt_test_file, 'r') as f:
+    tgt_test_data = f.readlines()
+assert len(src_test_data) == len(tgt_test_data)
+
+reference_data = []
+translation_data = []
+for i in range(len(src_test_data)):
+    src_words = src_test_data[i].split()
+    tgt_words = tgt_test_data[i].split()
+    out_words = translate(model, src_words)
+    src = ' '.join(src_words)
+    ref = ' '.join(tgt_words)
+    out = ' '.join(out_words)
+    bleu = compute_bleu([[tgt_words]], [out_words])
+    
+    result = True if out == ref else False
+    print('{}\tsrc\t{}\t{}'.format(i + 1, src, result))
+    print('{}\tref\t{}\t{}'.format(i + 1, ref, result))
+    print('{}\tout\t{}\t{}'.format(i + 1, out, result))
+    print('\t\tbleu: {:.4f}'.format(bleu))
+
+    reference_data.append([tgt_words])
+    translation_data.append(out_words)
+
+total_bleu = compute_bleu(reference_data, translation_data)
+print('BLEU: {:.4f}'.format(total_bleu))
