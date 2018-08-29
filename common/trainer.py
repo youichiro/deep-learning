@@ -16,13 +16,8 @@ class Trainer:
         self.current_epoch = 0
         self.do_report_bleu = False
 
-    def open_score_file(self, save_dir, **kwargs):
         with open(self.save_path + '/score.txt', 'w') as f:
-            f.write('model: %s\n' % save_dir)
-            for k, v in kwargs.items():
-                f.write('%s: %s\n' % (k, str(v)))
-            f.write('\nepoch\tloss\tbleu\n')
-
+            f.write('epoch\tloss\tbleu\n')
 
     def report_bleu(self, src_test, tgt_test, vocabs):
         self.do_report_bleu = True

@@ -45,22 +45,26 @@ hyperparameters = {
     'wordvec_size': wordvec_size, 'hidden_size': hidden_size,
     'batch_size': batch_size, 'max_epoch': max_epoch, 'max_grad': max_grad
     }
-statistics = {
+status = {
     'src_file': src_file, 'tgt_file': tgt_file, 'train_size': len(x_train), 'dev_size': len(x_dev),
     'src_vocab_size': src_vocab_size, 'tgt_vocab_size': tgt_vocab_size,
     'src_unk': str(src_unk_ratio*100)[:5] + '%', 'tgt_unk': str(tgt_unk_ratio*100)[:5] + '%'
 }
-statistics.update(hyperparameters)
+status.update(hyperparameters)
 save_path = os.getcwd() + '/' + save_dir
 os.makedirs(save_path, exist_ok=True)
 with open(save_path + '/vocabs.pkl', 'wb') as f:
     pickle.dump(vocabs, f)
 with open(save_path + '/hyperparameters.pkl', 'wb') as f:
     pickle.dump(hyperparameters, f)
+with open(save_path + '/status.txt', 'w') as f:
+    f.write('model: %s\n' % save_dir)
+    for k, v in status.items():
+        f.write('%s: %s\n' % (k, str(v)))
 
 # print statistics and hyperparameters
 print('\n---', save_dir, '---')
-for k, v in statistics.items():
+for k, v in status.items():
     print('%s: %s' %(k, str(v)))
 print()
 
@@ -69,7 +73,6 @@ train_iter = Iterator(x_train, t_train, batch_size, max_epoch)
 model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
 trainer = Trainer(model, optimizer, save_path)
-trainer.open_score_file(save_dir, **statistics)
 
 trainer.report_bleu(x_dev, t_dev, vocabs)
 trainer.run(train_iter, eval_interval, max_grad)
