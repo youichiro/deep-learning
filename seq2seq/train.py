@@ -3,10 +3,11 @@ import sys
 sys.path.append('..')
 import pickle
 from common.dataset import load_data
+from common.utils import calculate_unknown_ratio
+from common.iterator import Iterator
+from models import AttnBiSeq2Seq
 from common.optimizer import Adam
 from common.trainer import Trainer
-from models import AttnBiSeq2Seq
-from common.iterator import Iterator
 
 
 # files
@@ -27,16 +28,20 @@ max_grad = 10.0
 # dataset
 (x_train, t_train), (x_dev, t_dev), (src_w2id, tgt_w2id, src_id2w, tgt_id2w) \
                             = load_data(src_file, tgt_file, max_vocab_size, min_word_freq)
+src_unk_ratio = calculate_unknown_ratio(x_train, src_w2id.get('<unk>', None))
+tgt_unk_ratio = calculate_unknown_ratio(t_train, tgt_w2id.get('<unk>', None))
 
 # statistic
 src_vocab_size = len(src_w2id)
 tgt_vocab_size = len(tgt_w2id)
 
 print('\n---', save_dir, '---')
-print('src vocab size:', src_vocab_size)
-print('tgt vocab size:', tgt_vocab_size)
 print('train size:', len(x_train))
 print('dev size:', len(x_dev))
+print('src vocab size:', src_vocab_size)
+print('tgt vocab size:', tgt_vocab_size)
+print('src unknown ratio: {:.2f}%'.format(src_unk_ratio * 100))
+print('tgt unknown ratio: {:.2f}%'.format(tgt_unk_ratio * 100))
 print('\nwordvec size:', wordvec_size)
 print('hidden size:', hidden_size)
 print('batch size:', batch_size)

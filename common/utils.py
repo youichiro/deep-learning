@@ -8,6 +8,15 @@ from chainer.dataset.convert import to_device
 
 digit_pattern = re.compile(r'(\d( \d)*)+')
 
+
+def calculate_unknown_ratio(data, unk_id):
+    if not unk_id:
+        return 0.0
+    n_unk = sum([(s == unk_id).sum() for s in data])
+    total = sum([s.size] for s in data)
+    return n_unk / total
+
+
 def clean_ja_text(text):
     text = mojimoji.zen_to_han(text, kana=False)
     text = digit_pattern.sub('D', text)

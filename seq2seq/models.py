@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 from common.np import np
-from common.time_layers import *
+from common.time_layers import TimeLSTM, TimeBiLSTM, TimeEmbedding, TimeAffine, TimeSoftmaxWithLoss
 from common.base_model import BaseModel
 from attention_layer import TimeAttention
 
