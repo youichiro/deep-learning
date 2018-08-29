@@ -35,7 +35,7 @@ class Trainer:
         return bleu_score
 
     def save_model(self, model, epoch):
-        model.save_params(self.save_dir + '/e' + str(epoch) + '-model.pkl')
+        model.save_params(self.save_path + '/e' + str(epoch) + '-model.pkl')
 
     def save_score(self, epoch, loss, bleu):
         with open(self.save_path + '/score.txt', 'a') as f:
