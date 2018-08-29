@@ -9,7 +9,6 @@ from common.bleu import compute_bleu
 # import matplotlib.pyplot as plt
 # plt.rcParams["font.family"] = 'sans-serif'
 
-
 # test data
 src_test_file = '../datasets/naist/naist_gawonide.err.wkt'
 tgt_test_file = '../datasets/naist/naist_gawonide.ans.wkt'
@@ -22,10 +21,8 @@ hyper_file = 'hyperparameters.pkl'
 
 with open(save_dir + '/' + vocabs_file, 'rb') as f:
     vocabs = pickle.load(f)
-
 with open(save_dir + '/' + hyper_file, 'rb') as f:
     hypers = pickle.load(f)
-
 src_w2id = vocabs['src_w2id']
 src_id2w = vocabs['src_id2w']
 tgt_w2id = vocabs['tgt_w2id']
@@ -78,51 +75,52 @@ def visualize_attention(model, src_words, tgt_words):
     plot_attention(attention_map, row_labels, column_labels)
 
 
-# example
-# src_sentence = '私 は テニス 部員 で す 。'
-# tgt_sentence = "i 'm in the tennis club ."
-# src_words = src_sentence.split()
-# tgt_words = tgt_sentence.split()
+def test():
+    with open(src_test_file, 'r') as f:
+        src_test_data = f.readlines()
+    with open(tgt_test_file, 'r') as f:
+        tgt_test_data = f.readlines()
+    assert len(src_test_data) == len(tgt_test_data)
 
-# output = ' '.join(translate(model, src_words))
-# print('\ninput:', src_sentence)
-# print('output:', output)
+    print('model: {}/{}'.format(save_dir, model_file))
+    print('test data: {}'.format(src_test_file))
+    print('           {}\n'.format(tgt_test_file))
 
-# visualize_attention(model, src_words, tgt_words)
+    reference_data = []
+    translation_data = []
+    for i in tqdm(range(len(src_test_data))):
+        src_words = src_test_data[i].split()
+        tgt_words = tgt_test_data[i].split()
+        out_words = translate(model, src_words)
+        out_words = [w for w in out_words if w != '<eos>']
+        src = ''.join(src_words)
+        ref = ''.join(tgt_words)
+        out = ''.join(out_words)
+        bleu = compute_bleu([[tgt_words]], [out_words])[0]
+
+        result = True if out == ref else False
+        print('{}\tsrc\t{}\t{}'.format(i + 1, src, result))
+        print('{}\tref\t{}\t{}'.format(i + 1, ref, result))
+        print('{}\tout\t{}\t{}'.format(i + 1, out, result))
+        print('\t\tbleu: {:.4f}'.format(bleu))
+
+        reference_data.append([tgt_words])
+        translation_data.append(out_words)
+
+    total_bleu = compute_bleu(reference_data, translation_data)[0]
+    print('BLEU: {:.4f}'.format(total_bleu))
 
 
-# test
-with open(src_test_file, 'r') as f:
-    src_test_data = f.readlines()
-with open(tgt_test_file, 'r') as f:
-    tgt_test_data = f.readlines()
-assert len(src_test_data) == len(tgt_test_data)
+if __name__ == '__main__':
+    test()
+    # example
+    # src_sentence = '私 は テニス 部員 で す 。'
+    # tgt_sentence = "i 'm in the tennis club ."
+    # src_words = src_sentence.split()
+    # tgt_words = tgt_sentence.split()
 
-print('model: {}/{}'.format(save_dir, model_file))
-print('test data: {}'.format(src_test_file))
-print('           {}\n'.format(tgt_test_file))
+    # output = ' '.join(translate(model, src_words))
+    # print('\ninput:', src_sentence)
+    # print('output:', output)
 
-reference_data = []
-translation_data = []
-for i in tqdm(range(len(src_test_data))):
-    src_words = src_test_data[i].split()
-    tgt_words = tgt_test_data[i].split()
-    out_words = translate(model, src_words)
-    out_words = [w for w in out_words if w != '<eos>']
-    src = ''.join(src_words)
-    ref = ''.join(tgt_words)
-    out = ''.join(out_words)
-    bleu = compute_bleu([[tgt_words]], [out_words])[0]
-
-    result = True if out == ref else False
-    print('{}\tsrc\t{}\t{}'.format(i + 1, src, result))
-    print('{}\tref\t{}\t{}'.format(i + 1, ref, result))
-    print('{}\tout\t{}\t{}'.format(i + 1, out, result))
-    print('\t\tbleu: {:.4f}'.format(bleu))
-
-    reference_data.append([tgt_words])
-    translation_data.append(out_words)
-
-total_bleu = compute_bleu(reference_data, translation_data)[0]
-print('BLEU: {:.4f}'.format(total_bleu))
-
+    # visualize_attention(model, src_words, tgt_words)
