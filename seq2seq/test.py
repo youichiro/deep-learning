@@ -2,10 +2,11 @@ import sys
 sys.path.append('..')
 import pickle
 import numpy
-import matplotlib.pyplot as plt
 from models import AttnBiSeq2Seq
 from common.bleu import compute_bleu
-plt.rcParams["font.family"] = 'sans-serif'
+
+# import matplotlib.pyplot as plt
+# plt.rcParams["font.family"] = 'sans-serif'
 
 
 # test data
@@ -13,8 +14,8 @@ src_test_file = '../datasets/naist/naist_gawonide.err.wkt'
 tgt_test_file = '../datasets/naist/naist_gawonide.ans.wkt'
 
 # load model
-save_dir = 'tanaka_ja_en'
-model_file = 'e14-model.pkl'
+save_dir = 'mai_error100k'
+model_file = 'e16-model.pkl'
 vocabs_file = 'vocabs.pkl'
 hyper_file = 'hyperparameters.pkl'
 
@@ -76,19 +77,17 @@ def visualize_attention(model, src_words, tgt_words):
     plot_attention(attention_map, row_labels, column_labels)
 
 
-# test sentences
-src_sentence = '私 は テニス 部員 で す 。'
-tgt_sentence = "i 'm in the tennis club ."
-src_words = src_sentence.split()
-tgt_words = tgt_sentence.split()
+# example
+# src_sentence = '私 は テニス 部員 で す 。'
+# tgt_sentence = "i 'm in the tennis club ."
+# src_words = src_sentence.split()
+# tgt_words = tgt_sentence.split()
 
-# translation
-output = ' '.join(translate(model, src_words))
-print('\ninput:', src_sentence)
-print('output:', output)
+# output = ' '.join(translate(model, src_words))
+# print('\ninput:', src_sentence)
+# print('output:', output)
 
-# plot attention
-visualize_attention(model, src_words, tgt_words)
+# visualize_attention(model, src_words, tgt_words)
 
 
 # test
@@ -98,17 +97,22 @@ with open(tgt_test_file, 'r') as f:
     tgt_test_data = f.readlines()
 assert len(src_test_data) == len(tgt_test_data)
 
+print('model: {}/{}'.format(save_dir, model_file))
+print('test data: {}'.format(src_test_file))
+print('           {}'.format(tgt_test_file))
+
 reference_data = []
 translation_data = []
 for i in range(len(src_test_data)):
     src_words = src_test_data[i].split()
     tgt_words = tgt_test_data[i].split()
     out_words = translate(model, src_words)
-    src = ' '.join(src_words)
-    ref = ' '.join(tgt_words)
-    out = ' '.join(out_words)
-    bleu = compute_bleu([[tgt_words]], [out_words])
-    
+    out_words = [w for w in out_words if w != '<eos>']
+    src = ''.join(src_words)
+    ref = ''.join(tgt_words)
+    out = ''.join(out_words)
+    bleu = compute_bleu([[tgt_words]], [out_words])[0]
+
     result = True if out == ref else False
     print('{}\tsrc\t{}\t{}'.format(i + 1, src, result))
     print('{}\tref\t{}\t{}'.format(i + 1, ref, result))
@@ -118,5 +122,6 @@ for i in range(len(src_test_data)):
     reference_data.append([tgt_words])
     translation_data.append(out_words)
 
-total_bleu = compute_bleu(reference_data, translation_data)
+total_bleu = compute_bleu(reference_data, translation_data)[0]
 print('BLEU: {:.4f}'.format(total_bleu))
+
