@@ -10,19 +10,19 @@ from common.iterator import Iterator
 
 
 # files
-src_file = 'tanaka.ja.train'
-tgt_file = 'tanaka.en.train'
-save_dir = 'tanaka_ja_en_2'
+src_file = 'mai_error/mai2000.100k.err.wkt'
+tgt_file = 'mai_error/mai2000.100k.ans.wkt'
+save_dir = 'mai_error100k'
 
 # hyperparameter
 max_vocab_size = 30000
-min_word_freq = 2
+min_word_freq = 1
 wordvec_size = 300
 hidden_size = 300
 batch_size = 100
-max_epoch = 30
-eval_interval = 10
-max_grad = 5.0
+max_epoch = 20
+eval_interval = 50
+max_grad = 10.0
 
 # dataset
 (x_train, t_train), (x_dev, t_dev), (src_w2id, tgt_w2id, src_id2w, tgt_id2w) \

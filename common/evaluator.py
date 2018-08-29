@@ -68,7 +68,7 @@ def eval_blue(model, x_test, t_test, vocabs):
         t = [tgt_id2w[int(i)] for i in translation if int(i) not in [bos_id, eos_id, empty_id]]
         translations.append(t)
 
-    src = ' '.join([src_id2w[int(i)] for i in x_test[0] if int(i) != src_w2id['<ignore>'])
+    src = ' '.join([src_id2w[int(i)] for i in x_test[0] if int(i) != src_w2id['<ignore>']])
     print('src: ', src)
     print('ref: ' + ' '.join(references[0][0]))
     print('out: ' + ' '.join(translations[0]))
