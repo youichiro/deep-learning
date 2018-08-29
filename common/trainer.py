@@ -8,16 +8,20 @@ from common.evaluator import eval_blue
 
 
 class Trainer:
-    def __init__(self, model, optimizer, save_dir):
+    def __init__(self, model, optimizer, save_path):
         self.model = model
         self.optimizer = optimizer
-        self.save_dir = save_dir
+        self.save_path = save_path
         self.eval_interval = None
         self.current_epoch = 0
         self.do_report_bleu = False
 
-        with open(self.save_dir + '/score.txt', 'w') as f:
-            f.write('epoch\tloss\tbleu\n')
+    def open_score_file(self, save_dir, **kwargs):
+        with open(self.save_path + '/score.txt', 'w') as f:
+            f.write('model: %s\n' % save_dir)
+            for k, v in kwargs.items():
+                f.write('%s: %s\n' % (k, str(v)))
+            f.write('\nepoch\tloss\tbleu\n')
 
 
     def report_bleu(self, src_test, tgt_test, vocabs):
@@ -34,7 +38,7 @@ class Trainer:
         model.save_params(self.save_dir + '/e' + str(epoch) + '-model.pkl')
 
     def save_score(self, epoch, loss, bleu):
-        with open(self.save_dir + '/score.txt', 'a') as f:
+        with open(self.save_path + '/score.txt', 'a') as f:
             f.write('{}\t{:.4}\t{:.4}\n'.format(epoch, loss, bleu))
 
     def run(self, iterator, eval_interval=20, max_grad=None):
