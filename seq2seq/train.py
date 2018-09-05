@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append('..')
 import pickle
+import numpy
 from common.dataset import load_data
 from common.utils import calc_unk_ratio
 from common.iterator import Iterator
@@ -11,22 +12,22 @@ from common.trainer import Trainer
 
 
 # files
-src_file = 'mai_error/mai2000.70k.err.wkt'
-tgt_file = 'mai_error/mai2000.70k.ans.wkt'
-save_dir = 'mai_error70k'
+src_file = '../datasets/tanaka_corpus/train+dev.en'
+tgt_file = '../datasets/tanaka_corpus/train+dev.ja'
+save_dir = 'tanaka_en_ja'
 
 # hyperparameter
-max_vocab_size = 40000
+max_vocab_size = 20000
 min_word_freq = 1
-max_len = 40
-min_len = 4
-dev_size = 1000
+max_len = 70
+min_len = 3
+dev_size = 500
 wordvec_size = 300
 hidden_size = 300
 batch_size = 200
 max_epoch = 20
-eval_interval = 50
-max_grad = 10.0
+eval_interval = 100
+max_grad = None
 
 # dataset
 (x_train, t_train), (x_dev, t_dev), (src_w2id, tgt_w2id, src_id2w, tgt_id2w) \

@@ -10,12 +10,12 @@ from common.bleu import compute_bleu
 # plt.rcParams["font.family"] = 'sans-serif'
 
 # test data
-src_test_file = '../datasets/naist/naist_gawonide.err.wkt'
-tgt_test_file = '../datasets/naist/naist_gawonide.ans.wkt'
+src_test_file = '../datasets/tanaka_corpus/test.en'
+tgt_test_file = '../datasets/tanaka_corpus/test.ja'
 
 # load model
-save_dir = 'mai_error100k'
-model_file = 'e16-model.pkl'
+save_dir = 'tanaka_en_ja'
+model_file = 'e14-model.pkl'
 vocabs_file = 'vocabs.pkl'
 hyper_file = 'hyperparameters.pkl'
 
@@ -75,7 +75,7 @@ def visualize_attention(model, src_words, tgt_words):
     plot_attention(attention_map, row_labels, column_labels)
 
 
-def test():
+def test(src_test_file, tgt_test_file):
     with open(src_test_file, 'r') as f:
         src_test_data = f.readlines()
     with open(tgt_test_file, 'r') as f:
@@ -93,7 +93,7 @@ def test():
         tgt_words = tgt_test_data[i].split()
         out_words = translate(model, src_words)
         out_words = [w for w in out_words if w != '<eos>']
-        src = ''.join(src_words)
+        src = ' '.join(src_words)
         ref = ''.join(tgt_words)
         out = ''.join(out_words)
         bleu = compute_bleu([[tgt_words]], [out_words])[0]
@@ -107,12 +107,12 @@ def test():
         reference_data.append([tgt_words])
         translation_data.append(out_words)
 
-    total_bleu = compute_bleu(reference_data, translation_data)[0]
+    total_bleu = compute_bleu(reference_data, translation_data, smooth=True)[0]
     print('BLEU: {:.4f}'.format(total_bleu))
 
 
 if __name__ == '__main__':
-    test()
+    test(src_test_file, tgt_test_file)
     # example
     # src_sentence = '私 は テニス 部員 で す 。'
     # tgt_sentence = "i 'm in the tennis club ."

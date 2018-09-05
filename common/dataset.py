@@ -5,14 +5,12 @@ from collections import Counter
 
 
 def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, max_len=40, min_len=4, dev_size=1000):
-    src_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + src_file
-    tgt_file_path = os.path.dirname(os.path.abspath(__file__)) + '/../datasets/' + tgt_file
     src_data, tgt_data = [], []
     src_counter, tgt_counter = Counter(), Counter()
 
-    with open(src_file_path, 'r', encoding='utf-8') as f:
+    with open(src_file, 'r', encoding='utf-8') as f:
         src_lines = f.readlines()
-    with open(tgt_file_path, 'r', encoding='utf-8') as f:
+    with open(tgt_file, 'r', encoding='utf-8') as f:
         tgt_lines = f.readlines()
 
     print('Loading corpus... (%s and %s)' % (src_file, tgt_file))

@@ -58,6 +58,8 @@ def compute_bleu(reference_corpus, translation_corpus, max_order=4, smooth=False
 
     if ratio > 1.0:
         bp = 1.
+    elif ratio == 0.0:
+        bp = math.exp(1 - 1. / 0.000001)
     else:
         bp = math.exp(1 - 1. / ratio)
 
