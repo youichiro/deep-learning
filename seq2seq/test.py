@@ -3,19 +3,19 @@ sys.path.append('..')
 import pickle
 import numpy
 from tqdm import tqdm
-from models import AttnBiSeq2Seq
+from models import AttnBiSeq2Seq, AttentionSeq2Seq, Seq2Seq
 from common.bleu import compute_bleu
 
 # import matplotlib.pyplot as plt
 # plt.rcParams["font.family"] = 'sans-serif'
 
 # test data
-src_test_file = '../datasets/tanaka_corpus/test.en'
-tgt_test_file = '../datasets/tanaka_corpus/test.ja'
+src_test_file = '../datasets/naist/naist_gawonide.err.wkt'
+tgt_test_file = '../datasets/naist/naist_gawonide.ans.wkt'
 
 # load model
-save_dir = 'tanaka_en_ja'
-model_file = 'e14-model.pkl'
+save_dir = 'mai_error100k_3'
+model_file = 'e18-model.pkl'
 vocabs_file = 'vocabs.pkl'
 hyper_file = 'hyperparameters.pkl'
 
@@ -34,13 +34,14 @@ hidden_size = hypers['hidden_size']
 
 model = AttnBiSeq2Seq(src_vocab_size, tgt_vocab_size, wordvec_size, hidden_size)
 model.load_params(save_dir + '/' + model_file)
+bos_id = tgt_w2id['<bos>']
 eos_id = tgt_w2id['<eos>']
 
 
 def translate(model, src_words):
     ids = [src_w2id.get(w, src_w2id['<unk>']) for w in src_words]
     src = numpy.array([ids])
-    predict = model.generate(src, eos_id=eos_id)
+    predict = model.generate(src, bos_id=bos_id, eos_id=eos_id)
     out_words = [tgt_id2w[int(idx)] for idx in predict]
     return out_words
 

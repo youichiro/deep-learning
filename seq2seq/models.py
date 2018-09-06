@@ -115,8 +115,9 @@ class Seq2Seq(BaseModel):
         dout = self.encoder.backward(dh)
         return dout
 
-    def generate(self, xs, eos_id):
-        start_id = xs.flatten()[0]
+    def generate(self, xs, bos_id, eos_id):
+        # start_id = xs.flatten()[0]
+        start_id = bos_id
         h = self.encoder.forward(xs)
         sampled = self.decoder.generate(h, start_id, eos_id)
         return sampled

@@ -1,7 +1,19 @@
 import os
+import re
 import numpy
+import mojimoji
 from tqdm import tqdm
 from collections import Counter
+
+
+digit_pattern = re.compile(r'(\d( \d)*)+')
+
+
+def clean_text(text):
+    text = mojimoji.zen_to_han(text, kana=False)
+    text = digit_pattern.sub('#', text)
+    return text
+
 
 
 def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, max_len=40, min_len=4, dev_size=1000):
@@ -16,7 +28,9 @@ def load_data(src_file, tgt_file, max_vocab_size=50000, min_word_freq=3, max_len
     print('Loading corpus... (%s and %s)' % (src_file, tgt_file))
     for src, tgt in zip(tqdm(src_lines), tgt_lines):
         src_words = src.replace('\n', '').split()
+        # src_words = clean_text(src).replace('\n', '').split()
         tgt_words = tgt.replace('\n', '').split()
+        # tgt_words = clean_text(tgt).replace('\n', '').split()
         tgt_words = ['<bos>'] + tgt_words + ['<eos>']
 
         if not min_len <= len(src_words) <= max_len or not min_len <= len(tgt_words) <= max_len:

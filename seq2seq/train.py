@@ -6,22 +6,22 @@ import numpy
 from common.dataset import load_data
 from common.utils import calc_unk_ratio
 from common.iterator import Iterator
-from models import AttnBiSeq2Seq
+from models import AttnBiSeq2Seq, AttentionSeq2Seq, Seq2Seq
 from common.optimizer import Adam
 from common.trainer import Trainer
 
 
 # files
-src_file = '../datasets/tanaka_corpus/train+dev.en'
-tgt_file = '../datasets/tanaka_corpus/train+dev.ja'
-save_dir = 'tanaka_en_ja'
+src_file = '../datasets/mai_error/mai2000.100k.err.wkt'
+tgt_file = '../datasets/mai_error/mai2000.100k.ans.wkt'
+save_dir = 'mai_error100k_3'
 
 # hyperparameter
-max_vocab_size = 20000
+max_vocab_size = 38000
 min_word_freq = 1
-max_len = 70
+max_len = 40
 min_len = 3
-dev_size = 500
+dev_size = 1000
 wordvec_size = 300
 hidden_size = 300
 batch_size = 200
